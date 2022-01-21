@@ -1,0 +1,114 @@
+{"description": "C:/Users/Administrator/Desktop/Image_Src/2m/xinjiang_1shi_5.tiff", "driverShortName": "GTiff", "driverLongName": "GeoTIFF", "files": ["C:/Users/Administrator/Desktop/Image_Src/2m/xinjiang_1shi_5.tiff"
+    ], "size": [
+        22376,
+        19293
+    ], "coordinateSystem": {"wkt": "GEOGCRS[
+            "WGS 84",\n    DATUM[
+                "World Geodetic System 1984",\n        ELLIPSOID[
+                    "WGS 84",
+                    6378137,
+                    298.257223563,\n  
+          LENGTHUNIT[
+                        "metre",
+                        1
+                    ]
+                ]
+            ],\n    PRIMEM[
+                "Greenwich",
+                0,\n        ANGLEUNIT[
+                    "degree",
+                    0.0174532925199433
+                ]
+            ],\n    CS[ellipsoidal,
+                2
+            ],\n        AXIS[
+                "latitude",north,\n            ORDER[
+                    1
+                ],\n 
+           ANGLEUNIT[
+                    "degree",
+                    0.0174532925199433
+                ]
+            ],\n        AXIS[
+                "longitude",east,\n            ORDER[
+                    2
+                ],\n            ANGLEUNIT[
+                    "degree",
+                    0.0174532925199433
+                ]
+            ],\n    ID[
+                "EPSG",
+                4326
+            ]
+        ]", "dataAxisToSRSAxisMapping": [
+            2,
+            1
+        ]
+    }, "geoTransform": [
+        80.9940789,
+        2.7e-06,
+        0.0,
+        40.6811781,
+        0.0,
+        -2.7e-06
+    ], "metadata": {"": {"AREA_OR_POINT": "Area", "TIFFTAG_IMAGEDESCRIPTION": "Layer_1|Layer_2|Layer_3"
+        }, "IMAGE_STRUCTURE": {"INTERLEAVE": "PIXEL"
+        }
+    }, "cornerCoordinates": {"upperLeft": [
+            80.9940789,
+            40.6811781
+        ], "lowerLeft": [
+            80.9940789,
+            40.629087
+        ], "lowerRight": [
+            81.0544941,
+            40.629087
+        ], "upperRight": [
+            81.0544941,
+            40.6811781
+        ], "center": [
+            81.0242865,
+            40.6551325
+        ]
+    }, "wgs84Extent": {"type": "Polygon", "coordinates": [
+            [
+                [
+                    80.9940789,
+                    40.6811781
+                ],
+                [
+                    80.9940789,
+                    40.629087
+                ],
+                [
+                    81.0544941,
+                    40.629087
+                ],
+                [
+                    81.0544941,
+                    40.6811781
+                ],
+                [
+                    80.9940789,
+                    40.6811781
+                ]
+            ]
+        ]
+    }, "bands": [
+        {"band": 1, "block": [
+                22376,
+                1
+            ], "type": "Byte", "colorInterpretation": "Red", "noDataValue": 0.0, "metadata": {}
+        },
+        {"band": 2, "block": [
+                22376,
+                1
+            ], "type": "Byte", "colorInterpretation": "Green", "noDataValue": 0.0, "metadata": {}
+        },
+        {"band": 3, "block": [
+                22376,
+                1
+            ], "type": "Byte", "colorInterpretation": "Blue", "noDataValue": 0.0, "metadata": {}
+        }
+    ]
+}
