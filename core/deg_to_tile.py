@@ -28,6 +28,8 @@ def latlon_to_xyz(lat, lon, z):
   y = (1 - log(tan(radians(lat)) + sec(radians(lat))) / pi) / 2
   return(tile_count * x, tile_count * y)
 
+
+
 def bbox_to_xyz(lon_min, lon_max, lat_min, lat_max, z):
   x_min, y_max = latlon_to_xyz(lat_min, lon_min, z)
   x_max, y_min = latlon_to_xyz(lat_max, lon_max, z)
