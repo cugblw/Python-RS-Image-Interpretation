@@ -1,5 +1,4 @@
 import os
-from unicodedata import name
 from osgeo import gdal
 
 
