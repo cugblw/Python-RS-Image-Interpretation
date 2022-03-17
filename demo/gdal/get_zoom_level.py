@@ -1,6 +1,6 @@
 import math
 from osgeo import gdal
-from obtain_metadata import get_metadata
+from get_image_info import get_metadata
 
 # 获取最优显示zoom，影像的坐标系是WGS84，如果是投影坐标系，需要转换
 def get_optimal_zoom_level(geotiff_path,tile_size):

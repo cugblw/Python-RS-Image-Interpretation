@@ -2,7 +2,7 @@ import os
 import re
 import operator
 from osgeo import gdal
-from obtain_metadata import get_metadata
+from get_image_info import get_metadata
 
 
 def get_image_size(img_path):

@@ -4,7 +4,7 @@ import site
 from osgeo import gdal
 from osgeo_utils import gdal_edit as ge
 
-from obtain_metadata import get_metadata
+from get_image_info import get_metadata
 
 for item in site.getsitepackages():
     if "/lib/site-packages" in item.replace("\\", "/"):
