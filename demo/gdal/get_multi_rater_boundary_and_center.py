@@ -64,21 +64,6 @@ def get_multi_geotiff_extent(geotiff_dir):
     extent = [lon_min,lat_min,lon_max,lat_max]
     return extent
 
-# 获取最优显示zoom
-def get_optimal_zoom_level(geotiff_path):
-    dataset = gdal.Open(geotiff_path)
-    geo_transform = dataset.GetGeoTransform()
-    degrees_per_pixel = geo_transform[1]
-    radius = 6378137
-    equator = 2 * math.pi * radius
-    meters_per_degree = equator / 360
-    resolution = degrees_per_pixel * meters_per_degree
-    pixels_per_tile = 256
-    zoom_level = math.log((equator/pixels_per_tile)/resolution, 2)
-    MAX_ZOOM_LEVEL = 21
-    optimal_zoom_level = min(math.floor(zoom_level), MAX_ZOOM_LEVEL)
-    return optimal_zoom_level
-
 center_coordinate = get_multi_geotiff_center_coordinate(r"C:\Users\Administrator\Desktop\Image_Src\2m")
 extent_boundary = get_multi_geotiff_extent(r"C:\Users\Administrator\Desktop\Image_Src\2m")
 print(center_coordinate)
