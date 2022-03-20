@@ -1,20 +1,34 @@
+# -*- encoding: utf-8 -*-
+
+'''
+@File    :   parse_bil_to_geotiff.py
+@Time    :   2022/03/21 07:31:11
+@Author  :   Li Wei
+@Version :   1.0
+@Email   :   liwei@cennavi.com.cn
+@Desc    :   Parses the compressed binary dem '.bil' file into a '.tif' file.
+'''
+
+
 import os
 import site
 import struct
 import numpy as np
 from osgeo import gdal, osr
 
+
+# 处理gdal运行错误
 for item in site.getsitepackages():
     if "/lib/site-packages" in item.replace("\\", "/"):
         os.environ['PROJ_LIB'] = os.path.join(item, 'pyproj/proj_dir/share/proj')
 
 def parse_bil_file(bil_path, width, height):
-    # where you put the extracted BIL file
+    # 读取bil文件
     file = open(bil_path, "rb")
     contents = file.read()
     file.close()
 
-    # unpack binary data into a flat tuple z
+    # 将高程数据解压到元组
     s = "<%dH" % (int(width*height))
     z = struct.unpack(s, contents)
 
@@ -23,15 +37,14 @@ def parse_bil_file(bil_path, width, height):
     for r in range(0,height):
         for c in range(0,width):
             elevation = z[(width*r)+c]
-
+            #处理高程异常值
             if (elevation==65535 or elevation<0 or elevation>20000):
-                # may not be needed depending on format, and the "magic number"
-                # value used for 'void' or missing data
                 elevation=0.0
 
             heights[r][c]=float(elevation)
     return np.array(heights)
 
+#获取瓦片zoom,x,y
 def get_zoom_x_y(file_path):
     tile_number = (file_path.split('.')[0]).split('_')
     zoom = int(tile_number[0])
@@ -39,6 +52,7 @@ def get_zoom_x_y(file_path):
     y = int(tile_number[2])
     return zoom, x, y
 
+#瓦片号转换成经纬度
 def tile2lonlat(zoom, px, py):
     #计算每个瓦片的经差和纬差
     angPerTile = float(360) / (2**zoom)
@@ -50,22 +64,10 @@ def tile2lonlat(zoom, px, py):
     lry = uly - angPerTile
     return [ulx, uly, lrx, lry]
 
-def georeference_raster_tile(z, x, y, path):
-    bounds = tile2lonlat(z, x, y)
-    # bounds = [90.0, 40.97989806962013, 135.0, 0.0]
-    print(bounds)
-    filename, extension = os.path.splitext(path)
-    gdal.Translate(filename + '.tif',
-                   path,
-                   outputSRS='EPSG:4326',
-                   outputBounds=bounds)
-
-# georeference_raster_tile(3,6,3,r"C:\Users\Administrator\Desktop\3_6_3.jpg")
-
+#获取仿射变换参数
 def get_geotransform_from_boundary(boundary,size):
     geotransform = []
     
-    #此处值的添加顺序不能调整
     geotransform.append(boundary[0])
     geotransform.append((boundary[2]-boundary[0])/size)
     geotransform.append(0.0)
@@ -75,12 +77,13 @@ def get_geotransform_from_boundary(boundary,size):
     
     return tuple(geotransform)
 
+
 def save_array_to_tiff(tif_file_path,array_data,size,geotransform):
     driver = gdal.GetDriverByName("GTiff")
     wkt = 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,\
-    AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0],\
-    UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",\
-    NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]'
+           AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0],\
+           UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AXIS["Latitude",\
+           NORTH],AXIS["Longitude",EAST],AUTHORITY["EPSG","4326"]]'
 
     dst_ds = driver.Create(tif_file_path,
                         size,
@@ -88,19 +91,18 @@ def save_array_to_tiff(tif_file_path,array_data,size,geotransform):
                         1,
                         gdal.GDT_Int16)
 
-    #writting output raster
+    #写入栅格数据
     dst_ds.GetRasterBand(1).WriteArray( array_data )
-    #setting nodata value
+    #设置0值
     dst_ds.GetRasterBand(1).SetNoDataValue(-999)
-    #setting extension of output raster
-    # top left x, w-e pixel resolution, rotation, top left y, rotation, n-s pixel resolution
+    #设置仿射变换参数
     dst_ds.SetGeoTransform(geotransform)
-    # setting spatial reference of output raster
+    # 设置空间参考
     srs = osr.SpatialReference()
     srs.ImportFromWkt(wkt)
     dst_ds.SetProjection( srs.ExportToWkt() )
-    #Close output raster dataset
-
+    
+    #关闭数据集
     ds = None
     dst_ds = None
 
