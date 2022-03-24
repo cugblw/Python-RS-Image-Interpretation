@@ -42,18 +42,35 @@ def resize_image_by_times(img,times):
     return img_new
     
 
-img = Image.open(r"E:\Coding\Python\Python-RS-Image-Interpretation\test_resize.png")
+img = Image.open(r"E:\Coding\Python\Python-RS-Image-Interpretation\test_resize.jpg")
 
-img_new = resize_image_by_times(img, get_resize_times(12000,5000,512) )
+img_resize = resize_image_by_times(img, get_resize_times(12000,5000,512) )
 
 print(img.size)
-print(img_new.size)
+print(img_resize.size)
 data = np.array
 img_empty = np.zeros(shape=(height,width))
 
-# img_new.save("test_resize_by_times.png")
+# resize.save("test_resize_by_times.png")
 
-a = 6
+def convert_image_transparency(img):
+    rgba = img.convert("RGBA")
+    datas = rgba.getdata()
+    new_data = []
+    for pixels in datas:
+        if pixels[0] == 0 and pixels[1] == 0 and pixels[2] == 0:
+            new_data.append((255, 255, 255, 0))
+        else:
+            new_data.append(pixels)
+    rgba.putdata(new_data)
+    
+    return rgba
 
-if 0 <= a <10:
-    print(a)
+
+
+if __name__ == '__main__':
+
+    img_new = convert_image_transparency(img_resize)
+    # print(img_new)
+
+    img_new.save("test_transparency.png","PNG")
