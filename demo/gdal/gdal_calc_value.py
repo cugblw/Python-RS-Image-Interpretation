@@ -17,8 +17,8 @@ def change_raster_value(img_dir):
                 r_band_name = img_dir + "/" + file.split('.')[0] + "_R.tif"
                 g_band_name = img_dir + "/" + file.split('.')[0] + "_G.tif"
                 b_band_name = img_dir + "/" + file.split('.')[0] + "_B.tif"
-                print(r_band_name)
-                print(img_path)
+                # print(r_band_name)
+                # print(img_path)
                 r_band_command = ['', '-A', img_path, '--A_band', '1', '--outfile', r_band_name, '--calc', '(A*(A<255))']
                 g_band_command = ['', '-A', img_path, '--A_band', '2', '--outfile', g_band_name, '--calc', '(A*(A<255))']
                 b_band_command = ['', '-A', img_path, '--A_band', '3', '--outfile', b_band_name, '--calc', '(A*(A<255))']
