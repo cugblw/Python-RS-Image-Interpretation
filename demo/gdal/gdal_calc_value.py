@@ -24,7 +24,7 @@ def change_raster_value(img_dir):
                 b_band_command = ['', '-A', img_path, '--A_band', '3', '--outfile', b_band_name, '--calc', '(A*(A<255))']
 
                 result_name = img_dir + "/" + file.split('.')[0] + "_result.tif"
-                merge_command = ['', '-o', result_name,'-separate', '-co', 'PHOTOMETRIC=RGB', '-co', 'COMPRESS=DEFLATE', r_band_name, g_band_name, b_band_name]
+                merge_command = ['', '-o', result_name,'-separate', '-co', 'PHOTOMETRIC=RGB', '-co', 'COMPRESS=LZW', '-co', "BIGTIFF=YES", r_band_name, g_band_name, b_band_name]
 
                 gc.main(r_band_command)
                 gc.main(g_band_command)
