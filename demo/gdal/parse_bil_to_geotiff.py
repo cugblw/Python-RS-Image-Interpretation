@@ -15,6 +15,7 @@ import site
 import struct
 import numpy as np
 from osgeo import gdal, osr
+from PIL import Image
 
 
 # 处理gdal运行错误
@@ -77,6 +78,11 @@ def get_geotransform_from_boundary(boundary,size):
     
     return tuple(geotransform)
 
+def resize_tile(array_data, size):
+    img = Image.fromarray(array_data)
+    img_new = img.resize((size,size))
+    return np.array(img_new)
+
 
 def save_array_to_tiff(tif_file_path,array_data,size,geotransform):
     driver = gdal.GetDriverByName("GTiff")
@@ -107,8 +113,10 @@ def save_array_to_tiff(tif_file_path,array_data,size,geotransform):
     dst_ds = None
 
 if __name__ == '__main__':
-    # dem瓦片文件大小
-    size = 129
+    # dem瓦片大小
+    dem_size = 129
+    # tif瓦片大小
+    tile_size = 256
     # bil文件路径
     bil_path = r"C:\Users\Administrator\Desktop\bil\bil_zoom3"
     # tif文件保存路径
@@ -124,9 +132,10 @@ if __name__ == '__main__':
             tif_file_name = os.path.join(tif_path,file_name)
             zoom, x, y = get_zoom_x_y(file)
             geo_boundary = tile2lonlat(zoom, x ,y)
-            geotransform =get_geotransform_from_boundary(geo_boundary,size)
-            array_data = parse_bil_file(os.path.join(root,file),size,size)
-            save_array_to_tiff(tif_file_name,array_data,size,geotransform)
+            array_data = parse_bil_file(os.path.join(root,file),dem_size,dem_size)
+            geotransform =get_geotransform_from_boundary(geo_boundary,tile_size)
+            array_data_resize = resize_tile(array_data,tile_size)
+            save_array_to_tiff(tif_file_name,array_data_resize,tile_size,geotransform)
             print("convert '{}' to '{}';".format(file,file_name))
-
+    print ("----------------------------------")
     print ("Convert bil to geotiff  completed!")
