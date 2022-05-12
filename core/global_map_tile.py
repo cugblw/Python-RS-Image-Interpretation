@@ -400,9 +400,9 @@ if __name__ == "__main__":
     
     if latmax != None and lonmax != None:
         if latmax < lat:
-            Usage("ERROR: 'latmax' must be bigger then 'lat'")
+            Usage("ERROR: 'latmax' must be bigger than 'lat'")
         if lonmax < lon:
-            Usage("ERROR: 'lonmax' must be bigger then 'lon'")
+            Usage("ERROR: 'lonmax' must be bigger than 'lon'")
         boundingbox = (lon, lat, lonmax, latmax)
     
     tz = zoomlevel
