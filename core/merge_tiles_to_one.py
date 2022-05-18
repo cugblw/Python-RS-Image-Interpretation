@@ -3,7 +3,7 @@ from tkinter.tix import IMAGE
 from PIL import Image
 
 def getImageFilePath(file_path, x, y, zoom):
-    return file_path + "/" +  str(zoom) + "_" + str(x) + '_'+ str(y)+'.png'
+    return file_path + "/" +  str(zoom) + "_" + str(x) + '_'+ str(y)+'.jpg'
 
 def num2deg(xtile, ytile, zoom):
     n = 2.0 ** zoom
@@ -51,10 +51,11 @@ def mergeAllImageToOne(file_path, zoom, params):
             toImage.paste(fromImage, ((x-xmin) * mw, (y-ymin) * mw))
 
     image_new = resize_image(toImage, 256)
-    toImage.save(file_path + '/merge.png' )
-    image_new.save(file_path + '/merge_resize.png' )
+    toImage.save(file_path + '/merge.jpg' )
+    image_new.save(file_path + '/merge_resize.jpg' )
     toImage.close()
 
 if __name__ == '__main__':
-    file_path = 'C:/Users/Administrator/Desktop/tiles2'
-    mergeAllImageToOne(file_path, 18, [195616, 112764, 195620, 112768])
+    file_path = r'C:\Users\Administrator\Desktop\tile_move\satellite\16\R12\C25'
+    mergeAllImageToOne(file_path, 16, [51636, 25707, 51645, 25717])
+    # 51636, 51645, 25707, 25717
