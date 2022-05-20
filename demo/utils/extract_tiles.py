@@ -1,7 +1,5 @@
 import os
 import shutil
-import tarfile
-from numpy import tile
 import shapefile as shp
 import sys
 
