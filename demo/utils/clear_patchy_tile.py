@@ -1,12 +1,9 @@
 import io
 import os
-import sys
 import shutil
 import tarfile
-from tkinter import E
 from PIL import Image
 import time
-import shapefile as shp
 from shapely.geometry import Polygon
 from osgeo import ogr
 
@@ -211,14 +208,10 @@ if __name__ == '__main__':
     time_start = time.time()
 
     # Method 1
-    # clear_tile = ClearPatchyTile(tar_path)
-    # clear_tile.clear_patchy_tile()
-
-    # Method 2
     # filter_tile = FilterFullTile(tar_path, zoom_range)
     # filter_tile.filter()
     
-    # Method 3 保留沿海地区半透明瓦片
+    # Method 2 保留沿海地区半透明瓦片
     filter_tile = FilterFullTileExcludeCostal(tar_path, zoom_range)
     filter_tile.filter()
 
