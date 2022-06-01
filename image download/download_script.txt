@@ -1,5 +1,0 @@
-1. Landsat
-https://github.com/olivierhagolle/LANDSAT-Download/blob/master/download_landsat_scene.py
-
-2. Sentinel
-https://github.com/olivierhagolle/Sentinel-download/blob/master/Sentinel_download.py
