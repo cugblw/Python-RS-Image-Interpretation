@@ -1,4 +1,5 @@
 from hashlib import new
+import re
 from PIL import Image, ImageFilter
 import numpy as np
 
@@ -28,6 +29,7 @@ def create_oceanic_image():
 def create_blank_image():
     size = (256, 256)
     image = Image.new("RGB", size,"#131D29")
+    return image
     
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 import math
-from tkinter.tix import IMAGE
+# from tkinter.tix import 
 from PIL import Image
 
 def getImageFilePath(file_path, x, y, zoom):

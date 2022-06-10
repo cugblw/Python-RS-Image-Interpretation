@@ -202,18 +202,18 @@ class FilterFullTileExcludeCostal(object):
 
 if __name__ == '__main__':
     # # 指定tar包的路径
-    tar_path = r'C:\Users\Administrator\Desktop\Image_Out'
+    tar_path = r'C:\Users\Administrator\Desktop\05m\new'
     zoom_range = [1,22]
     
     time_start = time.time()
 
     # Method 1
-    # filter_tile = FilterFullTile(tar_path, zoom_range)
-    # filter_tile.filter()
-    
-    # Method 2 保留沿海地区半透明瓦片
-    filter_tile = FilterFullTileExcludeCostal(tar_path, zoom_range)
+    filter_tile = FilterFullTile(tar_path, zoom_range)
     filter_tile.filter()
+    
+    # # Method 2 保留沿海地区半透明瓦片
+    # filter_tile = FilterFullTileExcludeCostal(tar_path, zoom_range)
+    # filter_tile.filter()
 
     time_end = time.time()
     print('time used: ' + str(time_end - time_start) + 's')
