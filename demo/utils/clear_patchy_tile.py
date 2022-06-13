@@ -1,3 +1,18 @@
+from requests import head
+
+
+# -*- encoding: utf-8 -*-
+
+'''
+@File    :   clear_patchy_tile.py
+@Time    :   2022/06/14 01:06:52
+@Author  :   Lee
+@Version :   1.0
+@License :   (C)Copyright Cennavi, Li Wei
+@Desc    :   清除半透明瓦片
+'''
+
+
 import io
 import os
 import shutil
@@ -93,8 +108,9 @@ class ClearPatchyTile(object):
                 shutil.move(tile_dir + '_new.tar', root)
 
 class FilterFullTile(object):
-    def __init__(self, path, zoom_range):
+    def __init__(self, path, new_path, zoom_range):
         self.path = path
+        self.new_path = new_path
         self.zoom_range = zoom_range
         zoom_list = []
         for i in range(zoom_range[0], zoom_range[1] + 1):
@@ -107,7 +123,7 @@ class FilterFullTile(object):
                 if file.endswith(".tar"):
                     tar_file = tarfile.open(os.path.join(root, file))
                     members = tar_file.getmembers()
-                    with tarfile.open(os.path.join(root, file.split(".")[0]+"_new.tar"), 'w') as tar:
+                    with tarfile.open(os.path.join(new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
                         for member in members:
                             image = tar_file.extractfile(member)
                             image = image.read()
@@ -125,8 +141,9 @@ class FilterFullTile(object):
         del root, dirs, files
 
 class FilterFullTileExcludeCostal(object):
-    def __init__(self, path, zoom_range):
+    def __init__(self, path, new_path, zoom_range):
         self.path = path
+        self.new_path = new_path
         self.zoom_range = zoom_range
         zoom_list = []
         for i in range(zoom_range[0], zoom_range[1] + 1):
@@ -139,7 +156,7 @@ class FilterFullTileExcludeCostal(object):
                 if file.endswith(".tar"):
                     tar_file = tarfile.open(os.path.join(root, file))
                     members = tar_file.getmembers()
-                    with tarfile.open(os.path.join(root, file.split(".")[0]+"_new.tar"), 'w') as tar:
+                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
                         for member in members:
                             image = tar_file.extractfile(member)
                             image = image.read()
@@ -202,13 +219,14 @@ class FilterFullTileExcludeCostal(object):
 
 if __name__ == '__main__':
     # # 指定tar包的路径
-    tar_path = r'C:\Users\Administrator\Desktop\05m\new'
+    tar_path = r'C:\Users\cugbl\Desktop\16m'
+    new_path = r'C:\Users\cugbl\Desktop\new'
     zoom_range = [1,22]
     
     time_start = time.time()
 
     # Method 1
-    filter_tile = FilterFullTile(tar_path, zoom_range)
+    filter_tile = FilterFullTile(tar_path, new_path, zoom_range)
     filter_tile.filter()
     
     # # Method 2 保留沿海地区半透明瓦片
