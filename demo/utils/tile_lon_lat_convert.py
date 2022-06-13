@@ -100,7 +100,7 @@ def low_room_tile_to_high_room_tile(tile_x,tile_y,z_low,z_high):
     x_min,x_max,y_min,y_max = boundary_to_xyz(boundary[0], boundary[2], boundary[3], boundary[1], z_high)
     return (x_min, x_max, y_min, y_max, z_high)
 
-def high_room_tile_to_low_room_tile(tile_x,tile_y,z_low,z_high):
+def high_room_tile_to_low_room_tile(tile_x,tile_y,z_high,z_low):
     boundary = tile_edges(tile_x, tile_y, z_high)
     x_min,x_max,y_min,y_max = boundary_to_xyz(boundary[0], boundary[2], boundary[3], boundary[1], z_low)
     return (x_min, x_max, y_min, y_max, z_low)
@@ -117,4 +117,4 @@ if __name__ == '__main__':
     print(boundary_to_xyz(-180, 180, -85.05112878, 85.05112878, 4))
     print(tile_edges(6, 1, 3))
     print(low_room_tile_to_high_room_tile(0,0,0,10))
-    print(high_room_tile_to_low_room_tile(7,5,1,3))
+    print(high_room_tile_to_low_room_tile(6455,3214,13,10))
