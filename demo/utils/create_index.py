@@ -60,16 +60,27 @@ def read_index_data():
         data_length = int(len(data_reserve)/2)
         data = data_reserve[0:data_length]
         # print(data)
-        # for i in range(data_length):
-        #     print(bin(data[i])[2:].zfill(8))
+        for i in range(data_length):
+            print(bin(data[i])[2:].zfill(8))
 
         data_list = struct.unpack("@"+str(data_length)+"b", data)
     f.close()
     return data_list
 
+def fill_byte():
+    s = "10"
+    #左侧补足8位
+    bits = s.zfill(8)
+    print(bits)
+    #右侧补足8位
+    bits = s.ljust(8, '0')
+    print(bits)
+    return bits
+
 
 if __name__ == '__main__':
-    write_index_header()
-    write_index_data()
-    read_index_header()
-    print(read_index_data())
+    # write_index_header()
+    # write_index_data()
+    # read_index_header()
+    # read_index_data()
+    print(fill_byte())
