@@ -123,7 +123,7 @@ class FilterFullTile(object):
                 if file.endswith(".tar"):
                     tar_file = tarfile.open(os.path.join(root, file))
                     members = tar_file.getmembers()
-                    with tarfile.open(os.path.join(new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
+                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
                         for member in members:
                             image = tar_file.extractfile(member)
                             image = image.read()
