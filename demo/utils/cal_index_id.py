@@ -1,3 +1,15 @@
+# -*- encoding: utf-8 -*-
+
+'''
+@File    :   cal_index_id.py
+@Time    :   2022/06/15 05:55:20
+@Author  :   Lee
+@Version :   1.0
+@License :   (C)Copyright Cennavi, Li Wei
+@Desc    :   None
+'''
+
+
 import os
 import re
 import tarfile
