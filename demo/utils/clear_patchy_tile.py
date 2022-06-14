@@ -218,8 +218,9 @@ class FilterFullTileExcludeCostal(object):
 
 
 if __name__ == '__main__':
-    # # 指定tar包的路径
+    # 指定tar包的原始路径
     tar_path = r'C:\Users\cugbl\Desktop\16m'
+    # 指定新的tar包的路径
     new_path = r'C:\Users\cugbl\Desktop\new'
     zoom_range = [1,22]
     
