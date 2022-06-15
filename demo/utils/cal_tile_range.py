@@ -36,12 +36,11 @@ def check_tile_exist(zoom, x, y, tile_dir):
     else:
         return False
 
-def calculate_tile_xyz_recusively(zoom, x, y,zoom_max,tile_index,tile_dir,morton_dict):
+def calculate_tile_xyz_recusively(zoom, x, y,zoom_max,tile_dir,morton_dict):
     """递归计算瓦片编号,查询瓦片是否存在"""
     if zoom > zoom_max:
         return
     
-    tile_name = generate_file_name("satellite", zoom, x, y)
     bit_code = ''
     if check_tile_exist(zoom, x, y, tile_dir):
         bit_code = '1'
@@ -50,16 +49,21 @@ def calculate_tile_xyz_recusively(zoom, x, y,zoom_max,tile_index,tile_dir,morton
     # tile_id = str(zoom)+"_"+str(x)+"_"+str(y)
     # with open(tile_index, "a+") as f:
     #     f.write(tile_name + "\n")
-    morton_code = pm.interleave3(x,y,zoom)
+    if zoom > 8:
+        k = zoom-10
+        i = x -int(x/2**k)*(2**k)
+        j = y -int(y/2**k)*(2**k)        
+        morton_code = pm.interleave3(i,j,k)
+        morton_dict[morton_code] = bit_code
+    else:
+        morton_code = pm.interleave3(x,y,zoom)
     #  morton_dict[str(morton_code)].append(tile_name)
-    morton_dict[morton_code] = bit_code
+        morton_dict[morton_code] = bit_code
     
-    # 
-    calculate_tile_xyz_recusively(zoom + 1, x * 2, y * 2, zoom_max,tile_index,tile_dir,morton_dict)
-    calculate_tile_xyz_recusively(zoom + 1, x * 2 + 1, y * 2, zoom_max,tile_index,tile_dir,morton_dict)
-    calculate_tile_xyz_recusively(zoom + 1, x * 2, y * 2 + 1, zoom_max,tile_index,tile_dir,morton_dict)
-    calculate_tile_xyz_recusively(zoom + 1, x * 2 + 1, y * 2 + 1, zoom_max,tile_index,tile_dir,morton_dict)
-    # return morton_dict
+    calculate_tile_xyz_recusively(zoom + 1, x * 2, y * 2, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recusively(zoom + 1, x * 2 + 1, y * 2, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recusively(zoom + 1, x * 2, y * 2 + 1, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recusively(zoom + 1, x * 2 + 1, y * 2 + 1, zoom_max,tile_dir,morton_dict)
 
 
 
@@ -74,8 +78,8 @@ if __name__ == "__main__":
     start_zoom = 0
     end_zoom = 3
     morton_dict = {}
-    tile_dir = r"C:\Users\cugbl\Desktop\Tile"
-    calculate_tile_xyz_recusively(start_zoom, 0, 0, end_zoom, "tile_index.txt",tile_dir,morton_dict)
+    tile_dir = r"C:\Users\Administrator\Desktop\tile_index"
+    calculate_tile_xyz_recusively(start_zoom, 0, 0, end_zoom,tile_dir,morton_dict)
     morton_dict = dict(sorted(morton_dict.items(), key=lambda x: x[0]))
     print(morton_dict)
     # print(len(morton_dict))
@@ -84,7 +88,7 @@ if __name__ == "__main__":
     # with open('tile_index.txt','r') as f:
     #     print(len(f.read()))
 
-    print("".join(bits_chain))
+    print(len("".join(bits_chain)))
     # with open('tile_index.txt','w') as f:
     #     for item in morton_dict:
     #         f.write(item[1]+"\n")

@@ -1,4 +1,5 @@
 from operator import index
+import os
 import re
 import struct
 
@@ -92,13 +93,13 @@ def remove_invalid_bits(bits_chain):
     if len(bits_chain) <= sum_bits_length(4,0,4):
         return bits_chain, start_zoom+4
     elif bits_chain[sum_bits_length(4,0,4):sum_bits_length(4,0,5)] == '0'*cal_bits_length(4,5):
-        return bits_chain[0:sum_bits_length(4,0,4)], start_zoom+4
+        return bits_chain[0:sum_bits_length(4,0,4)], start_zoom+5
     elif bits_chain[sum_bits_length(4,0,5):sum_bits_length(4,0,6)] == '0'*cal_bits_length(4,6):
         return bits_chain[0:sum_bits_length(4,0,5)], start_zoom+5
     elif bits_chain[sum_bits_length(4,0,6):sum_bits_length(4,0,7)] == '0'*cal_bits_length(4,7):
-        return bits_chain[0:sum_bits_length(4,0,6)], start_zoom+6
+        return bits_chain[0:sum_bits_length(4,0,6)], start_zoom+5
     elif bits_chain[sum_bits_length(4,0,7):sum_bits_length(4,0,8)] == '0'*cal_bits_length(4,8):
-        return bits_chain[0:sum_bits_length(4,0,7)], start_zoom+7
+        return bits_chain[0:sum_bits_length(4,0,7)], start_zoom+5
     else:
         return bits_chain, start_zoom+8
 
@@ -117,18 +118,40 @@ if __name__ == '__main__':
     # read_index_header()
     # read_index_data()
     # print(fill_bits("10"))
-    start_zoom = 10
-    end_room = 18
-    index_file = 'test.idx'
-    bits_chain = "1111110011001"
-    bits_chain,end_zoom = remove_invalid_bits(bits_chain)
-    print(bits_chain,start_zoom)
-    bits_chain_full = concatenate_bits_chain(bits_chain)
-    print(len(bits_chain))
-    write_index_header(start_zoom,end_room,index_file)
-    write_index_data(bits_chain_full,index_file)
+
+    # start_zoom = 10
+    # end_zoom = 18
+    # index_file = 'test.idx'
+    # # index_file = r'C:\Users\Administrator\Desktop\tile_index\satellite\index\10_806_401.idx'
+    # bits_chain = "11101" + "1"*16 + '1'*64+'1'*128+'0'*128 + '0'*1024
+
+    # # print(bits_chain)
+    # bits_chain,end_zoom_new = remove_invalid_bits(bits_chain)
+    # # print(bits_chain,end_zoom_new)
+    # bits_chain_full = concatenate_bits_chain(bits_chain)
+    # print(bits_chain_full)
+    # print(len(bits_chain))
+    # print(len(bits_chain_full))
+    # if os.path.exists(index_file):
+    #     os.remove(index_file)
+    # write_index_header(start_zoom,end_zoom_new,index_file)
+    # write_index_data(bits_chain_full,index_file)
+    # print(read_index_header(index_file))
+    # index_data = read_index_data(index_file)
+    # print(len(index_data))
+    # print(bin(index_data[0])[2:].zfill(8))
+    # print(sum_bits_length(4,0,4))
+
+
+    index_file = r'C:\Users\Administrator\Desktop\tile_index\satellite\index\10_807_402.idx'
     print(read_index_header(index_file))
     index_data = read_index_data(index_file)
-    print(bin(index_data[1])[2:].zfill(8))
-    print(sum_bits_length(4,0,5))
+    print(len(index_data))
+    print(bin(index_data[0])[2:].zfill(8))
+
+    # # print(206545-int(206545/256)*256)
+    # # print(102863-int(102863/256)*256)
+    # print(sum_bits_length(4,0,6))
+
+
     
