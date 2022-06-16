@@ -143,16 +143,17 @@ if __name__ == '__main__':
     # print(sum_bits_length(4,0,4))
 
 
-    index_file = r'C:\Users\Administrator\Desktop\tile_index\satellite\index\10_806_401.idx'
+    index_file = r'C:\Users\cugbl\Desktop\Tile\satellite\index\10_807_402.idx'
     print(read_index_header(index_file))
     index_data = read_index_data(index_file)
     print(len(index_data))
     bits_chain = []
     for i in range(len(index_data)):
-        # print(bin(index_data[i])[2:].zfill(8))
-        bits_chain.append(bin(index_data[i])[2:].zfill(8))
-    bits_chain = "".join(bits_chain)
-    print(bits_chain)
+        # print(index_data[i])
+        print(bin(index_data[i])[2:].zfill(8))
+    #     bits_chain.append(bin(index_data[i])[2:].zfill(8))
+    # bits_chain = "".join(bits_chain)
+    # print(bits_chain)
     # print(bin(index_data[0])[2:].zfill(8))
 
     # # print(206545-int(206545/256)*256)

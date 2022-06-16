@@ -10,6 +10,7 @@
 '''
 
 
+import code
 import os
 import math
 import time
@@ -53,11 +54,11 @@ def calculate_tile_xyz_recusively(zoom, x, y,zoom_max,tile_dir,morton_dict):
         k = zoom-10
         i = x -int(x/2**k)*(2**k)
         j = y -int(y/2**k)*(2**k)        
-        morton_code = pm.interleave3(i,j,k)
+        morton_code = pm.interleave(i,j)+4**k
         # tile_id = str(zoom)+"_"+str(x)+"_"+str(y)
-        morton_dict[morton_code] = morton_code
+        morton_dict[morton_code] = bit_code
     else:
-        morton_code = pm.interleave3(x,y,zoom)
+        morton_code = pm.interleave(x,y) + 4**(zoom)
     #  morton_dict[str(morton_code)].append(tile_name)
         morton_dict[morton_code] = bit_code
     
