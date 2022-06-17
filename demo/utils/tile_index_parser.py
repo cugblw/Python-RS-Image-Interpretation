@@ -10,6 +10,7 @@
 '''
 
 import os
+import pymorton as pm
 import tile_lon_lat_convert as tc
 import build_index_structure as bs
 
@@ -84,8 +85,14 @@ def request_tile(zoom,x,y,tile_dir,index_dir):
         elif zoom >= start_zoom or zoom <= end_zoom:
             tile_path = os.path.join(tile_dir,generate_file_name("satellite", zoom, x, y))
             index_data = bs.read_index_data(index_file)
+            before_zoom_length = bs.sum_bits_length(4,0,zoom-11)
+            zoom_bits_length = bs.cal_bits_length(4,(zoom-10))
             # index_data_zoom = index_data[]
+            print(x-(int(x>>(zoom-10)<<(zoom-10))),y-(int(y>>(zoom-10)<<(zoom-10))))
+            print(pm.interleave(x-(int(x>>(zoom-10)<<(zoom-10))),y-(int(y>>(zoom-10)<<(zoom-10)))))
             print(len(index_data))
+            print(zoom_bits_length)
+            print(before_zoom_length)
         else:
             pass
 
@@ -102,9 +109,9 @@ def request_tile(zoom,x,y,tile_dir,index_dir):
     # return tile_id_list
 
 if __name__ == '__main__':
-    # tile_dir = r"C:\Users\Administrator\Desktop\tile_index"
-    # index_dir = r"C:\Users\Administrator\Desktop\tile_index\satellite\index"
+    tile_dir = r"C:\Users\cugbl\Desktop\Tile"
+    index_dir = r"C:\Users\cugbl\Desktop\Tile\satellite\index"
 
     # # request_tile(14,12908,6426,tile_dir,index_dir)
-    # tile_exist = request_tile(15,25817,12853,tile_dir,index_dir)
-    index_file = r"C:\Users\Administrator\Desktop\tile_index\satellite\index"
+    tile_exist = request_tile(15,25817,12853,tile_dir,index_dir)
+    # index_file = r"C:\Users\Administrator\Desktop\tile_index\satellite\index"
