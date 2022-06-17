@@ -1,4 +1,15 @@
-from operator import index
+# -*- encoding: utf-8 -*-
+
+'''
+@File    :   build_index_structure.py
+@Time    :   2022/06/17 14:32:42
+@Author  :   Lee
+@Version :   1.0
+@License :   (C)Copyright Cennavi, Li Wei
+@Desc    :   None
+'''
+
+
 import os
 import re
 import struct
@@ -111,6 +122,17 @@ def sum_bits_length(num,start,end):
         return 0
     return num**start+sum_bits_length(num,start+1,end)
 
+def cal_bytes_length(num,n):
+    if n <= 2:
+        return 1
+    else: 
+        return int(cal_bits_length(num,n)/8)
+
+def sum_bytes_length(num,start,end):
+    if start > end:
+        return 0
+    return cal_bytes_length(num,start)+sum_bytes_length(num,start+1,end)
+
 
 if __name__ == '__main__':
     # write_index_header()
@@ -143,7 +165,7 @@ if __name__ == '__main__':
     # print(sum_bits_length(4,0,4))
 
 
-    index_file = r'C:\Users\cugbl\Desktop\Tile\satellite\index\10_807_402.idx'
+    index_file = r'C:\Users\Administrator\Desktop\global_index\10_0_7.idx'
     print(read_index_header(index_file))
     index_data = read_index_data(index_file)
     print(len(index_data))
@@ -151,14 +173,16 @@ if __name__ == '__main__':
     for i in range(len(index_data)):
         # print(index_data[i])
         print(bin(index_data[i])[2:].zfill(8))
-    #     bits_chain.append(bin(index_data[i])[2:].zfill(8))
-    # bits_chain = "".join(bits_chain)
-    # print(bits_chain)
-    # print(bin(index_data[0])[2:].zfill(8))
+        bits_chain.append(bin(index_data[i])[2:].zfill(8))
+    bits_chain = "".join(bits_chain)
+    print(bits_chain)
+    print(bin(index_data[0])[2:].zfill(8))
 
     # # print(206545-int(206545/256)*256)
     # # print(102863-int(102863/256)*256)
-    # print(sum_bits_length(4,0,6))
+    # print(sum_bits_length(4,0,8))
+    # print(cal_bytes_length(4,8))
+    # print(sum_bytes_length(4,0,8))
 
 
     

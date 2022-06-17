@@ -37,35 +37,49 @@ def check_tile_exist(zoom, x, y, tile_dir):
     else:
         return False
 
-def calculate_tile_xyz_recusively(zoom, x, y,zoom_max,tile_dir,morton_dict):
+def calculate_tile_xyz_recursively(zoom, x, y,zoom_max,tile_dir,morton_dict):
     """递归计算瓦片编号,查询瓦片是否存在"""
     if zoom > zoom_max:
         return
-    
+
     bit_code = ''
     if check_tile_exist(zoom, x, y, tile_dir):
         bit_code = '1'
     else:
         bit_code = '0'
-    # tile_id = str(zoom)+"_"+str(x)+"_"+str(y)
-    # with open(tile_index, "a+") as f:
-    #     f.write(tile_name + "\n")
+
     if zoom > 8:
         k = zoom-10
         i = x -int(x/2**k)*(2**k)
         j = y -int(y/2**k)*(2**k)        
         morton_code = pm.interleave(i,j)+4**k
+        # if x == 206545 and y == 102859:
+        #     print( "x:",x,"y:",y,"zoom:",zoom,"morton_code:",morton_code) 
         # tile_id = str(zoom)+"_"+str(x)+"_"+str(y)
         morton_dict[morton_code] = bit_code
     else:
         morton_code = pm.interleave(x,y) + 4**(zoom)
-    #  morton_dict[str(morton_code)].append(tile_name)
         morton_dict[morton_code] = bit_code
     
-    calculate_tile_xyz_recusively(zoom + 1, x * 2, y * 2, zoom_max,tile_dir,morton_dict)
-    calculate_tile_xyz_recusively(zoom + 1, x * 2 + 1, y * 2, zoom_max,tile_dir,morton_dict)
-    calculate_tile_xyz_recusively(zoom + 1, x * 2, y * 2 + 1, zoom_max,tile_dir,morton_dict)
-    calculate_tile_xyz_recusively(zoom + 1, x * 2 + 1, y * 2 + 1, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recursively(zoom + 1, x * 2, y * 2, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recursively(zoom + 1, x * 2 + 1, y * 2, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recursively(zoom + 1, x * 2, y * 2 + 1, zoom_max,tile_dir,morton_dict)
+    calculate_tile_xyz_recursively(zoom + 1, x * 2 + 1, y * 2 + 1, zoom_max,tile_dir,morton_dict)
+
+def calculate_global_tile_xyz_recursively(zoom, x, y, zoom_max,morton_dict):
+    if zoom > zoom_max:
+        return
+    bit_code = '1'
+    k = zoom-10
+    i = x -int(x/2**k)*(2**k)
+    j = y -int(y/2**k)*(2**k)
+    morton_code = pm.interleave(i,j)+4**k
+    morton_dict[morton_code] = bit_code
+
+    calculate_global_tile_xyz_recursively(zoom + 1, x * 2, y * 2, zoom_max,morton_dict)
+    calculate_global_tile_xyz_recursively(zoom + 1, x * 2 + 1, y * 2, zoom_max,morton_dict)
+    calculate_global_tile_xyz_recursively(zoom + 1, x * 2, y * 2 + 1, zoom_max,morton_dict)
+    calculate_global_tile_xyz_recursively(zoom + 1, x * 2 + 1, y * 2 + 1, zoom_max,morton_dict)
 
 
 
@@ -81,7 +95,7 @@ if __name__ == "__main__":
     end_zoom = 3
     morton_dict = {}
     tile_dir = r"C:\Users\Administrator\Desktop\tile_index"
-    calculate_tile_xyz_recusively(start_zoom, 0, 0, end_zoom,tile_dir,morton_dict)
+    calculate_tile_xyz_recursively(start_zoom, 0, 0, end_zoom,tile_dir,morton_dict)
     morton_dict = dict(sorted(morton_dict.items(), key=lambda x: x[0]))
     print(morton_dict)
     # print(len(morton_dict))
