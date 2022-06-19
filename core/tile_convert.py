@@ -1,4 +1,24 @@
-from math import log, tan, radians, cos, pi, floor, degrees, atan, sinh
+
+from math import log, tan, radians, cos, pi, floor, degrees, atan, sinh,exp
+
+TILE_SIZE = 256
+
+
+def tile_x_to_longitude(tile_x, zoom):
+    return pixel_x_to_longitude(int(tile_x) * TILE_SIZE, zoom)
+
+
+def pixel_x_to_longitude(pixel_x, zoom):
+    return 360 * ((float(pixel_x) / (TILE_SIZE << zoom)) - 0.5)
+
+
+def pixel_y_to_latitude(pixel_y, zoom):
+    y = 0.5 - float(pixel_y) / (TILE_SIZE << zoom)
+    return 90 - 360 * atan(exp(-y * 2 * pi)) / pi
+
+
+def tile_y_to_latitude(tile_y, zoom):
+    return pixel_y_to_latitude(int(tile_y) * TILE_SIZE, zoom)
 
 
 def sec(x):
@@ -45,3 +65,12 @@ def tile_edges(x, y, z):
     lat1, lat2 = y_to_lat_edges(y, z)
     lon1, lon2 = x_to_lon_edges(x, z)
     return[lon1, lat1, lon2, lat2]
+
+def tile2boundary(zoom, x, y):
+    lon_min = tile_x_to_longitude(x, zoom)
+    lat_max = tile_y_to_latitude(y, zoom)
+    lon_max = tile_x_to_longitude(x + 1, zoom)
+    lat_min = tile_y_to_latitude(y + 1, zoom)
+
+    extent = [lon_min, lat_min, lon_max, lat_max]
+    return extent

@@ -65,7 +65,7 @@ class FillOCeanColor(object):
 
 
 if __name__ == '__main__':
-    tar_path = r"C:\Users\cugbl\Desktop\16m"
+    tar_path = r"C:\Users\cugbl\Desktop\out"
     new_path = r"C:\Users\cugbl\Desktop\new"
     # 海洋填充背景颜色
     color = "#131D29"

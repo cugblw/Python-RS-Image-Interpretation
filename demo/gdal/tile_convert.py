@@ -148,6 +148,6 @@ def convert_image_to_bytes(img):
 
 
 if __name__ == '__main__':
-   extent =  tile2boundary(12,3204,2011)
+   extent =  tile2boundary(16, 48904, 28191)
    print(extent)
    # [101.66748046875, 3.1405161039832308, 101.689453125, 3.1624555302378496]
