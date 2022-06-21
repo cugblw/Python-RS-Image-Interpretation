@@ -78,6 +78,9 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
     if x0 >= 0 and y0 >= 0 and x1 < width and y1 < height:  # 请求瓦片完全在影像内部
         rgb_data = np.dstack([ds.GetRasterBand(n + 1).ReadAsArray(int(x0), int(y0), int(x1 - x0), int(y1 - y0)) for n in
                               range(ds.RasterCount)])
+        
+        if np.all(rgb_data == 0):
+            return None
 
         img = convert_image_from_array(rgb_data)
         img_resize = resize_image(img, tile_size)
@@ -117,7 +120,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
             # band3_data[int((0-y0)/times):int(height/times) - int(y0/times),int((0-x0)/times):int(width/times)-int(x0/times)] = band3_part_data
 
             # rgb_data = np.dstack([band1_data,band2_data,band3_data])
-
+                        
+            if np.all(rgb_data == 0):
+                return None
+                
             img = convert_image_from_array(rgb_data)
             img_resize = resize_image(img, tile_size)
             img_transparency = convert_image_transparency(img_resize)
@@ -130,7 +136,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
             band_part_data = np.dstack(
                 [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, width, height) for n in range(ds.RasterCount)])
             rgb_data[(0 - y0):(height - y0), (0 - x0):(width - x0), :] = band_part_data
-
+                        
+            if np.all(rgb_data == 0):
+                return None
+                
             img = convert_image_from_array(rgb_data)
             img_resize = resize_image(img, tile_size)
             img_transparency = convert_image_transparency(img_resize)
@@ -150,7 +159,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                      range(ds.RasterCount)])
                 rgb_data[int((0 - y0) / times):(int(y1 / times) - int(y0 / times)),
                 int((0 - x0) / times):(int(x1 / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+                    
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -167,7 +179,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             for n in range(ds.RasterCount)])
                 rgb_data[0:(int(height / times) - int(y0 / times)),
                 int((0 - x0) / times):(int(x1 / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -184,7 +199,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             range(ds.RasterCount)])
                 rgb_data[int((0 - y0) / times):(int(y1 / times) - int(y0 / times)),
                 0:(int(width / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -201,7 +219,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             for n in range(ds.RasterCount)])
                 rgb_data[0:(int(height / times) - int(y0 / times)), 0:(int(width / times) - int(x0 / times)),
                 :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -217,7 +238,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             n in range(ds.RasterCount)])
                 rgb_data[0:(int(y1 / times) - int(y0 / times)),
                 int((0 - x0) / times):(int(x1 / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -233,7 +257,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                      in range(ds.RasterCount)])
                 rgb_data[int((0 - y0) / times):(int(height / times) - int(y0 / times)),
                 int((0 - x0) / times):(int(x1 / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -249,7 +276,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                      for n in range(ds.RasterCount)])
                 rgb_data[int((0 - y0) / times):(int(y1 / times) - int(y0 / times)),
                 0:(int(x1 / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -265,7 +295,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                      range(ds.RasterCount)])
                 rgb_data[int((0 - y0) / times):(int(y1 / times) - int(y0 / times)),
                 int((0 - x0) / times):(int(width / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -282,7 +315,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             n in range(ds.RasterCount)])
                 rgb_data[0:(int(y1 / times) - int(y0 / times)), 0:(int(width / times) - int(x0 / times)),
                 :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -299,7 +335,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             range(ds.RasterCount)])
                 rgb_data[int((0 - y0) / times):(int(height / times) - int(y0 / times)),
                 0:(int(width / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -316,7 +355,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             for n in range(ds.RasterCount)])
                 rgb_data[0:(int(height / times) - int(y0 / times)), 0:(int(x1 / times) - int(x0 / times)),
                 :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -333,7 +375,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                                             for n in range(ds.RasterCount)])
                 rgb_data[0:(int(height / times) - int(y0 / times)),
                 int((0 - x0) / times):(int(width / times) - int(x0 / times)), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -354,7 +399,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, x1, y1) for n in range(ds.RasterCount)])
                 rgb_data[(0 - y0):(y1 - y0), (0 - x0):(x1 - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -367,7 +415,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(0, y0, x1, (height - y0)) for n in range(ds.RasterCount)])
                 rgb_data[0:(height - y0), (0 - x0):(x1 - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -380,7 +431,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(x0, 0, (width - x0), y1) for n in range(ds.RasterCount)])
                 rgb_data[(0 - y0):(y1 - y0), 0:(width - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -394,7 +448,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                     [ds.GetRasterBand(n + 1).ReadAsArray(x0, y0, (width - x0), (height - y0)) for n in
                      range(ds.RasterCount)])
                 rgb_data[0:(height - y0), 0:(width - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -407,7 +464,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(0, y0, x1, (y1 - y0)) for n in range(ds.RasterCount)])
                 rgb_data[0:(y1 - y0), (0 - x0):(x1 - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -420,7 +480,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, x1, height) for n in range(ds.RasterCount)])
                 rgb_data[(0 - y0):(height - y0), (0 - x0):(x1 - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -433,7 +496,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(x0, 0, (x1 - x0), y1) for n in range(ds.RasterCount)])
                 rgb_data[(0 - y0):(y1 - y0), 0:(x1 - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -446,7 +512,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, width, y1) for n in range(ds.RasterCount)])
                 rgb_data[(0 - y0):(y1 - y0), (0 - x0):(width - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -460,7 +529,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                     [ds.GetRasterBand(n + 1).ReadAsArray(x0, y0, (width - x0), (y1 - y0)) for n in
                      range(ds.RasterCount)])
                 rgb_data[0:(y1 - y0), 0:(width - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -473,7 +545,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(x0, 0, (width - x0), height) for n in range(ds.RasterCount)])
                 rgb_data[(0 - y0):(height - y0), 0:(width - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -487,7 +562,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                     [ds.GetRasterBand(n + 1).ReadAsArray(x0, y0, (x1 - x0), (height - y0)) for n in
                      range(ds.RasterCount)])
                 rgb_data[0:(height - y0), 0:(x1 - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -500,7 +578,10 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 band_part_data = np.dstack(
                     [ds.GetRasterBand(n + 1).ReadAsArray(0, y0, width, (height - y0)) for n in range(ds.RasterCount)])
                 rgb_data[0:(height - y0), (0 - x0):(width - x0), :] = band_part_data
-
+        
+                if np.all(rgb_data == 0):
+                    return None
+            
                 img = convert_image_from_array(rgb_data)
                 img_resize = resize_image(img, tile_size)
                 img_transparency = convert_image_transparency(img_resize)
@@ -515,18 +596,18 @@ def read_image_data_by_tile(zoom, x, y, tile_size, ds):
                 img = Image.open(BytesIO(img))
                 return None
 
-def read_geotiff_by_tile(zoom,x,y,tile_size,dataset):
+def read_geotiff_by_tile(zoom,x,y,tile_size,dataset,zoom_divide):
     """
     获取影像的子集
     """
     # lon_min, lat_min, lon_max, lat_max = tile2boundary(zoom, x, y)
     # bbox = [lon_min, lat_min, lon_max, lat_max]
     # projwin = (lon_min, lat_max, lon_max, lat_min)
-    ds = None
-    if zoom == 14:
-        ds = dataset
-    else:
-        ds = get_geotiff_subset(dataset, zoom, x, y)
+    ds = dataset
+    # if zoom == max(end_zoom -4,start_zoom):
+    #     ds = dataset
+    # else:
+    #     ds = get_geotiff_subset(dataset, zoom, x, y)
     
 
     band = ds.GetRasterBand(1)
@@ -550,24 +631,54 @@ def read_geotiff_by_tile(zoom,x,y,tile_size,dataset):
     _x1, _y1 = gdal.ApplyGeoTransform(inv_geotransform, bbox[2], bbox[3])
     x0, y0 = int(min(_x0, _x1)), int(min(_y0, _y1))
     x1, y1 = int(max(_x0, _x1)), int(max(_y0, _y1))
-    
-    # if ((x1 - x0) / tile_size) > 5 or ((y1 - y0) / tile_size) > 5:  # 请求层级太小，内存溢出处理
-    #         times = get_resize_times((x1 - x0), (y1 - y0), tile_size)  # 缩放倍数
+    if zoom <= zoom_divide:
+        if ((x1 - x0) / tile_size) > 5 or ((y1 - y0) / tile_size) > 5:  # 请求层级太小，内存溢出处理
+            times = get_resize_times((x1 - x0), (y1 - y0), tile_size)  # 缩放倍数
+            band_part_data = np.dstack(
+            [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, width, height, int(width / times), int(height / times)) for n
+                in range(ds.RasterCount)])
+            # rgb_data[int((0 - y0) / times):int(height / times) - int(y0 / times),
+            # int((0 - x0) / times):int(width / times) - int(x0 / times), :] = band_part_data
 
-    # rgb_data = np.zeros((int((y1 - y0) / times), int((x1 - x0) / times), 3), dtype=np.uint8)
-    band_part_data = np.dstack(
-        [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, width, height) for n
-            in range(ds.RasterCount)])
-    # rgb_data[int((0 - y0) / times):int(height / times) - int(y0 / times),
-    # int((0 - x0) / times):int(width / times) - int(x0 / times), :] = band_part_data
+            # img = convert_image_from_array(rgb_data)
 
-    # img = convert_image_from_array(rgb_data)
-    img = convert_image_from_array(band_part_data)
-    img_resize = resize_image(img, tile_size)
-    img_transparency = convert_image_transparency(img_resize)
-    del ds
-    #return convert_image_to_bytes(img_transparency)
-    return img_transparency
+            if np.all(band_part_data == 0):
+                return None
+            img = convert_image_from_array(band_part_data)
+            img_resize = resize_image(img, tile_size)
+            img_transparency = convert_image_transparency(img_resize)
+            del ds
+            #return convert_image_to_bytes(img_transparency)
+            return img_transparency
+        else:
+            band_part_data = np.dstack(
+            [ds.GetRasterBand(n + 1).ReadAsArray(0, 0, width, height) for n
+                in range(ds.RasterCount)])
+            # rgb_data[int((0 - y0) / times):int(height / times) - int(y0 / times),
+            # int((0 - x0) / times):int(width / times) - int(x0 / times), :] = band_part_data
+
+            # img = convert_image_from_array(rgb_data)
+            if np.all(band_part_data == 0):
+                return None
+            img = convert_image_from_array(band_part_data)
+            img_resize = resize_image(img, tile_size)
+            img_transparency = convert_image_transparency(img_resize)
+            del ds
+            #return convert_image_to_bytes(img_transparency)
+            return img_transparency
+    else:
+        rgb_data = np.dstack([ds.GetRasterBand(n + 1).ReadAsArray(int(x0), int(y0), int(x1 - x0), int(y1 - y0)) for n in
+                                range(ds.RasterCount)])
+
+        if np.all(rgb_data == 0):
+            return None
+
+        img = convert_image_from_array(rgb_data)
+        img_resize = resize_image(img, tile_size)
+        img_transparency = convert_image_transparency(img_resize)
+        del ds
+        #return convert_image_to_bytes(img_transparency)
+        return img_transparency
 
 
 

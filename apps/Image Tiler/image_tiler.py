@@ -3,6 +3,8 @@ import time
 import sys
 from multiprocessing import Pool
 
+import numpy as np
+
 sys.path.append('./')
 
 from core import cal_tile_range as ctr
@@ -27,15 +29,18 @@ def cut_image_tile(tile_range, tile_size, dataset,tile_dir):
 # 多线程切图
 def cut_image_tile_multi_process(tile_set):
     """裁剪影像瓦片"""
-    tile_range, tile_size, geotiff_path,tile_dir = tile_set[0], tile_set[1], tile_set[2], tile_set[3]
+    tile_range, tile_size, geotiff_path, tile_dir, zoom_divide = tile_set[0], tile_set[1], tile_set[2], tile_set[3], tile_set[4]
     dataset = ri.read_geotiff(geotiff_path)
     zoom, zoom_max, x_min, x_max, y_min, y_max=tile_range
-    if zoom < 14:
+    if zoom < zoom_divide:
         start_time = time.time()
         for x in range(x_min, x_max+1):
             for y in range(y_min, y_max+1):
+                # ds_subset = rsoi.get_geotiff_subset(dataset, zoom, x, y)
                 img =rsoi.read_image_data_by_tile(zoom, x, y, tile_size, dataset)
-                # img =rsoi.read_geotiff_by_tile(zoom, x, y, tile_size, dataset)
+                # img =rsoi.read_geotiff_by_tile(zoom, x, y, tile_size, ds_subset)
+                if np.all(np.asarray(img) == 0):
+                    img = None
                 save_tile(tile_dir, zoom, x, y, img)
         end_time = time.time()
         print("cut image into tile, zoom = {zoom}".format(zoom = str(zoom)) + 
@@ -52,7 +57,7 @@ def cut_image_tile_recursive(zoom, end_zoom, x, y, tile_size, dataset, tile_dir)
     if zoom>end_zoom:
         return
 
-    img =rsoi.read_geotiff_by_tile(zoom, x, y, tile_size, dataset)
+    img =rsoi.read_image_data_by_tile(zoom, x, y, tile_size, dataset)
     save_tile(tile_dir, zoom, x, y, img)
     cut_image_tile_recursive(zoom+1, end_zoom, x * 2, y * 2, tile_size, dataset, tile_dir)
     cut_image_tile_recursive(zoom+1, end_zoom, x * 2 + 1, y * 2, tile_size, dataset, tile_dir)
@@ -75,8 +80,8 @@ def save_tile(tile_dir,zoom,x,y,img):
 
 if __name__ == "__main__":
     tile_size = 256
-    tile_dir = r"C:\Users\Administrator\Desktop\tile_test"
-    geotiff_path = r"D:\lanzhou_05m_test.tif"
+    tile_dir = r"C:\Users\cugbl\Desktop\tile_test"
+    geotiff_path = r"E:\Data\test\lanzhou_2m_test.tif"
 
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)
@@ -95,6 +100,7 @@ if __name__ == "__main__":
     end_zoom = gzl.get_optimal_zoom_level(geotiff_path, tile_size)
     # print("Start zoom",start_zoom)
     # print("End zoom",end_zoom)
+    zoom_divide = max(end_zoom - 4,start_zoom)
 
     for zoom in range(start_zoom,end_zoom+1):
         if not os.path.exists(tile_dir + "/" + str(zoom)):
@@ -107,9 +113,9 @@ if __name__ == "__main__":
     tile_range = ctr.tile_range_list(extent, start_zoom, end_zoom)
     tile_range_list = []
     for i in tile_range:
-        tile_range_list.append([i,tile_size,geotiff_path,tile_dir])
+        tile_range_list.append([i,tile_size,geotiff_path,tile_dir,zoom_divide])
     del dataset
-    pool = Pool(processes=4)
+    pool = Pool(processes=6)
     pool.map(cut_image_tile_multi_process, tile_range_list)
 
     time_end = time.time()
