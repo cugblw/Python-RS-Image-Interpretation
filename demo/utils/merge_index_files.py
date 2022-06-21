@@ -10,10 +10,12 @@
 '''
 
 
-from operator import index
 import os
+import time
 import shutil
+
 import build_index_structure as bis
+
 
 def merge_index_files(index_dir_less, index_dir_more):
     """
@@ -111,7 +113,16 @@ def merge_index_files(index_dir_less, index_dir_more):
 
 
 if __name__ == '__main__':
-    index_dir_less = r'C:\Users\cugbl\Desktop\index2m'
-    index_dir_more = r'C:\Users\cugbl\Desktop\index16m'
+    start_time = time.time()
+    print("start to merge index files ...")
+    print("-----------------------------------------")
+    
+    index_dir_less = r'C:\Users\Administrator\Desktop\index\2m'
+    index_dir_more = r'C:\Users\Administrator\Desktop\index\16m'
 
     merge_index_files(index_dir_less, index_dir_more)
+
+    end_time = time.time()
+    print("-----------------------------------------")
+    print("merge index files completed.")
+    print("time used:", str(round((end_time - start_time),3)) + "s.")

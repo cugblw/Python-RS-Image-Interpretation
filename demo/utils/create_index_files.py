@@ -112,9 +112,9 @@ def create_global_index_file(start_zoom, end_zoom,index_dir):
 if __name__ == '__main__':
     start_zoom = 10
     end_zoom = 18
-    tar_dir = r"C:\Users\cugbl\Desktop\2m"
-    tile_dir = r"C:\Users\cugbl\Desktop\2m"
-    index_dir = r"C:\Users\cugbl\Desktop\index2m"
+    tar_dir = r"C:\Users\Administrator\Desktop\05m"
+    tile_dir = r"C:\Users\Administrator\Desktop\05m"
+    index_dir = r"C:\Users\Administrator\Desktop\index\05m"
     tile_list = ci.get_tile_id_from_tar(tar_dir)
     tile_list_convert = ci.convert_tile_id(tile_list)
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     end_time = time.time()
     print("-----------------------------------------")
     print("create index file completed!")
-    print("time used: " + str((end_time - start_time)/60) + "min.") 
+    print("time used: " + str(round((end_time - start_time)/60,3)) + "min.") 
 
     # # create global index file from zoom 10 to zoom 14
     # index_dir = r"C:\Users\Administrator\Desktop\global_index"

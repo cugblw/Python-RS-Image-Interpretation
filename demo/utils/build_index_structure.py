@@ -10,7 +10,6 @@
 '''
 
 
-from asyncore import write
 import struct
 
 def write_index_header(start_zoom,end_room,index_file):

@@ -27,6 +27,7 @@ def generate_file_name(source_name, z, x, y):
         file_name = os.path.join(source_name, str(z), str(z) + "_" + str(x) + "_" + str(y) + ".jpg")
     return file_name
 
+
 def get_index(zoom,x,y,index_dir):
     """
     计算瓦片索引文件
@@ -49,6 +50,7 @@ def get_index(zoom,x,y,index_dir):
         print("index not found.")
         return None
 
+
 def get_parent_tile(zoom,x,y):
     """
     获取父瓦片
@@ -61,6 +63,7 @@ def get_parent_tile(zoom,x,y):
         y_index = int(y>>(zoom-10))
         z_index = 10
         return str(z_index)+'_'+str(x_index)+'_'+str(y_index)
+
 
 def search_partent_tile_recursively(zoom,x,y,tile_dir,index_dir,index_data,zoom_end=14):
     if zoom < zoom_end:
@@ -80,6 +83,7 @@ def search_partent_tile_recursively(zoom,x,y,tile_dir,index_dir,index_data,zoom_
         
     else:
         search_partent_tile_recursively(zoom-1,x,y,tile_dir,index_dir,index_data,zoom_end)
+
 
 def request_tile(zoom,x,y,tile_dir,index_dir):
     """
