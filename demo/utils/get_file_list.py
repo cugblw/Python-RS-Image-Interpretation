@@ -22,6 +22,6 @@ def get_tile_list2(path):
 
 
 if __name__ == '__main__':
-    path = r'E:\satellite\data_result\5MjdiCKeDLht\satellite\10'
+    path = r'C:\Users\Administrator\Desktop\tile_test'
     get_tile_list1(path)
 
