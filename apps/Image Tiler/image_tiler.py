@@ -80,8 +80,8 @@ def save_tile(tile_dir,zoom,x,y,img):
 
 if __name__ == "__main__":
     tile_size = 256
-    tile_dir = r"C:\Users\cugbl\Desktop\tile_test"
-    geotiff_path = r"E:\Data\test\lanzhou_2m_test.tif"
+    tile_dir = r"C:\Users\Administrator\Desktop\tile_test"
+    geotiff_path = r"E:\home\image_src\shenzhen_dg-5120.tif"
 
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     end_zoom = gzl.get_optimal_zoom_level(geotiff_path, tile_size)
     # print("Start zoom",start_zoom)
     # print("End zoom",end_zoom)
-    zoom_divide = max(end_zoom - 4,start_zoom)
+    zoom_divide = int((end_zoom + start_zoom)/2)
 
     for zoom in range(start_zoom,end_zoom+1):
         if not os.path.exists(tile_dir + "/" + str(zoom)):

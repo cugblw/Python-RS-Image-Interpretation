@@ -604,7 +604,7 @@ def read_geotiff_by_tile(zoom,x,y,tile_size,dataset,zoom_divide):
     # bbox = [lon_min, lat_min, lon_max, lat_max]
     # projwin = (lon_min, lat_max, lon_max, lat_min)
     ds = dataset
-    # if zoom == max(end_zoom -4,start_zoom):
+    # if zoom == int((end_zoom + start_zoom)/2):
     #     ds = dataset
     # else:
     #     ds = get_geotiff_subset(dataset, zoom, x, y)
