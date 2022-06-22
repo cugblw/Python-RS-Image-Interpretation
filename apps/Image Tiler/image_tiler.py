@@ -80,8 +80,8 @@ def save_tile(tile_dir,zoom,x,y,img):
 
 if __name__ == "__main__":
     tile_size = 256
-    tile_dir = r"C:\Users\Administrator\Desktop\tile_test"
-    geotiff_path = r"D:\lanzhou_05m_test.tif"
+    tile_dir = r"C:\Users\cugbl\Desktop\tile_test"
+    geotiff_path = r"E:\Data\test\lanzhou_2m.tif"
 
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)

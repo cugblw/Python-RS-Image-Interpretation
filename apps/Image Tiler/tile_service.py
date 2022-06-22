@@ -1,49 +1,43 @@
 import os
 import sys
+from flask import make_response
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from starlette import status
 from fastapi.openapi.utils import get_openapi
-from fastapi_restful import Resource, Api, set_responses
+
+
+import utils.tile_util as tu
 
 
 app = FastAPI()
-api = Api(app)
 
 @app.get("/")
 @app.get("/homepage", status_code=status.HTTP_200_OK)
-async def homepage():
+def homepage():
     return {"message": "This is the Image Tiler Homepage!"}
 
+# 瓦片服务接口
+@app.get("/service/satellite/tile/{zoom}/{x}/{y}")
+def get_tile(zoom: int, x: int, y: int):
+    data = tu.search_tile(zoom, x, y)
+    res = Response(data)
+    res.headers["Content-Type"] = "image/png"
+    res.headers['Access-Control-Allow-Origin'] = '*'
+    res.headers['Access-Control-Allow-Methods'] = 'GET,POST'
+    res.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
+    return res
 
-# def custom_openapi():
-#     if app.openapi_schema:
-#         return app.openapi_schema
-#     openapi_schema = get_openapi(
-#         title="Custom title",
-#         version="2.5.0",
-#         description="This is a very custom OpenAPI schema",
-#         routes=app.routes,
-#     )
-#     openapi_schema["paths"]["/api/auth"] = {
-#         "post": {
-#             "requestBody": {"content": {"application/json": {}}, "required": True}, "tags": ["Auth"]
-#         }
-#     }
-#     app.openapi_schema = openapi_schema
-#     return app.openapi_schema
+# http://10.168.1.105:8002/question?id=1
+@app.get("/question")
+def get_question(id: int):
+    return {"id": id, "question": "What's your name?"}
 
 
-# app.openapi = custom_openapi
 
-class TileService(Resource):
-    @set_responses(response={"message": "This is the Image Tiler Tile Service!"})
-    def get(self):
-        return {"message": "This is the Image Tiler Service!"}
-
-api.add_resource(TileService, "/service/satellite/tile")
 
 
 if __name__ == "__main__":
-    uvicorn.run("image_tiler:app",host='192.168.21.146', port=8002, reload=True,workers=3)
+    # uvicorn.run("tile_service:app",host='10.168.1.105', port=8002, reload=True,workers=3)
+    uvicorn.run("tile_service:app",host='0.0.0.0', port=8002, reload=True,workers=3)
