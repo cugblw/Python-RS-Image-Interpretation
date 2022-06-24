@@ -11,7 +11,9 @@
 '''
 
 
+import io
 import os
+import tarfile
 import time
 import sys
 from multiprocessing import Pool
@@ -62,22 +64,34 @@ def cut_image_tile_multi_process(tile_set):
               ", time used: " + str(round(end_time - start_time, 3)) + "s.")
     else:
         ds_subset = rsoi.get_geotiff_subset(dataset, zoom, x_min, y_min)
+        tile_dict = {}
         start_time = time.time()
-        cut_image_tile_recursive(zoom, zoom_max, x_min, y_min, tile_size, ds_subset, tile_dir)
+        cut_image_tile_recursive(zoom, zoom_max, x_min, y_min, tile_size, ds_subset, tile_dir, tile_dict)
         end_time = time.time()
         print("cut image into tile, zoom = {zoom} - {zoom_max}".format(zoom = str(zoom),zoom_max = 
               str(zoom_max)) + ", time used: " + str(round(end_time - start_time, 3)) + "s.")
+        tar_name = str(zoom) + "_" + str(x_min) + "_" + str(y_min) + ".tar"
+        with tarfile.open(os.path.join(tile_dir, tar_name), "w") as tar:
+            for key in tile_dict.keys():
+                if tile_dict[key] is not None:
+                    tar.add(os.path.join(tile_dir, key + ".png"), arcname=key + ".png")
+                else:
+                    pass
+        tar.close()
 
-def cut_image_tile_recursive(zoom, end_zoom, x, y, tile_size, dataset, tile_dir):
+
+def cut_image_tile_recursive(zoom, end_zoom, x, y, tile_size, dataset, tile_dir, tile_dict):
     if zoom>end_zoom:
         return
 
     img =rsoi.read_image_data_by_tile(zoom, x, y, tile_size, dataset)
-    save_tile(tile_dir, zoom, x, y, img)
-    cut_image_tile_recursive(zoom+1, end_zoom, x * 2, y * 2, tile_size, dataset, tile_dir)
-    cut_image_tile_recursive(zoom+1, end_zoom, x * 2 + 1, y * 2, tile_size, dataset, tile_dir)
-    cut_image_tile_recursive(zoom+1, end_zoom, x * 2, y * 2 + 1, tile_size, dataset, tile_dir)
-    cut_image_tile_recursive(zoom+1, end_zoom, x * 2 + 1, y * 2 + 1, tile_size, dataset, tile_dir)
+    # save_tile(tile_dir, zoom, x, y, img)
+    tile_id = str(zoom) + '/'+str(zoom) + "_" + str(x) + "_" + str(y)
+    tile_dict[tile_id] = img
+    cut_image_tile_recursive(zoom+1, end_zoom, x * 2, y * 2, tile_size, dataset, tile_dir, tile_dict)
+    cut_image_tile_recursive(zoom+1, end_zoom, x * 2 + 1, y * 2, tile_size, dataset, tile_dir, tile_dict)
+    cut_image_tile_recursive(zoom+1, end_zoom, x * 2, y * 2 + 1, tile_size, dataset, tile_dir, tile_dict)
+    cut_image_tile_recursive(zoom+1, end_zoom, x * 2 + 1, y * 2 + 1, tile_size, dataset, tile_dir, tile_dict)
 
 
 # 保存瓦片
@@ -96,7 +110,7 @@ def save_tile(tile_dir,zoom,x,y,img):
 if __name__ == "__main__":
     tile_size = 256
     tile_dir = r"C:\Users\Administrator\Desktop\tile_test"
-    geotiff_path = r"D:\lanzhou_2m.tif"
+    geotiff_path = r"D:\lanzhou.tif"
 
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)
