@@ -74,7 +74,12 @@ def cut_image_tile_multi_process(tile_set):
         with tarfile.open(os.path.join(tile_dir, tar_name), "w") as tar:
             for key in tile_dict.keys():
                 if tile_dict[key] is not None:
-                    tar.add(os.path.join(tile_dir, key + ".png"), arcname=key + ".png")
+                    img_byte_arr = io.BytesIO()
+                    tarinfo = tarfile.TarInfo(name=key+".png")
+                    tile_dict[key].save(img_byte_arr, format='PNG')
+                    data = img_byte_arr.getvalue()
+                    tarinfo.size = len(data)
+                    tar.addfile(tarinfo, fileobj=io.BytesIO(data))
                 else:
                     pass
         tar.close()
@@ -109,8 +114,8 @@ def save_tile(tile_dir,zoom,x,y,img):
 
 if __name__ == "__main__":
     tile_size = 256
-    tile_dir = r"C:\Users\Administrator\Desktop\tile_test"
-    geotiff_path = r"D:\lanzhou.tif"
+    tile_dir = "C:/Users/cugbl/Desktop/tile_test"
+    geotiff_path = "E:/Data/test/lanzhou.tif"
 
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)
