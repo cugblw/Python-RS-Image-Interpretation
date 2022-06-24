@@ -5,7 +5,7 @@ def generate_file_name(zoom,x,y):
     return str(zoom) + '/' + str(zoom)+ "_" + str(x) + "_" + str(y) + ".png"
 
 def search_tile(zoom: int, x: int, y: int):
-    path = r'C:\Users\cugbl\Desktop\tile_test'
+    path = r'C:\Users\Administrator\Desktop\tile_test'
     tile_path = generate_file_name(zoom, x, y)
     file_path = os.path.join(path, tile_path)
     file_path_jpg = file_path.replace('.png', '.jpg')

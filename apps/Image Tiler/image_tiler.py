@@ -1,3 +1,16 @@
+#!/usr/bin/python3
+# -*- encoding: utf-8 -*-
+
+'''
+@File    :   image_tiler.py
+@Time    :   2022/06/24 10:45:53
+@Author  :   Weil Lee
+@Version :   1.0
+@Email   :   cugblw2014@outlook.com
+@Desc    :   None
+'''
+
+
 import os
 import time
 import sys
@@ -24,12 +37,14 @@ def cut_image_tile(tile_range, tile_size, dataset,tile_dir):
                 img =rsoi.read_image_data_by_tile(key, x, y, tile_size, dataset)
                 save_tile(tile_dir, key, x, y, img)
         end_time = time.time()
-        print("cut image into tile, zoom = {zoom}".format(zoom = str(key)) + ", time used: " + str(round(end_time - start_time, 3)) + "s.")
+        print("cut image into tile, zoom = {zoom}".format(zoom = str(key)) + 
+              ", time used: " + str(round(end_time - start_time, 3)) + "s.")
 
 # 多线程切图
 def cut_image_tile_multi_process(tile_set):
     """裁剪影像瓦片"""
-    tile_range, tile_size, geotiff_path, tile_dir, zoom_divide = tile_set[0], tile_set[1], tile_set[2], tile_set[3], tile_set[4]
+    tile_range, tile_size, geotiff_path, tile_dir, zoom_divide = (tile_set[0], tile_set[1], tile_set[2], 
+                                                                  tile_set[3], tile_set[4])
     dataset = ri.read_geotiff(geotiff_path)
     zoom, zoom_max, x_min, x_max, y_min, y_max=tile_range
     if zoom < zoom_divide:
@@ -50,8 +65,8 @@ def cut_image_tile_multi_process(tile_set):
         start_time = time.time()
         cut_image_tile_recursive(zoom, zoom_max, x_min, y_min, tile_size, ds_subset, tile_dir)
         end_time = time.time()
-        print("cut image into tile, zoom = {zoom} - {zoom_max}".format(zoom = str(zoom),zoom_max = str(zoom_max)) +
-              ", time used: " + str(round(end_time - start_time, 3)) + "s.")
+        print("cut image into tile, zoom = {zoom} - {zoom_max}".format(zoom = str(zoom),zoom_max = 
+              str(zoom_max)) + ", time used: " + str(round(end_time - start_time, 3)) + "s.")
 
 def cut_image_tile_recursive(zoom, end_zoom, x, y, tile_size, dataset, tile_dir):
     if zoom>end_zoom:
@@ -80,8 +95,8 @@ def save_tile(tile_dir,zoom,x,y,img):
 
 if __name__ == "__main__":
     tile_size = 256
-    tile_dir = r"C:\Users\cugbl\Desktop\tile_test"
-    geotiff_path = r"E:\Data\test\lanzhou_2m.tif"
+    tile_dir = r"C:\Users\Administrator\Desktop\tile_test"
+    geotiff_path = r"D:\lanzhou_2m.tif"
 
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)

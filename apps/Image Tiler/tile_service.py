@@ -1,26 +1,29 @@
 import os
 import sys
-from flask import make_response
 
 import uvicorn
 from fastapi import FastAPI, Request, Response
 from starlette import status
 from fastapi.openapi.utils import get_openapi
-
+from typing import Optional
 
 import utils.tile_util as tu
 
 
 app = FastAPI()
 
+# @app.route('/{_:path}')
+# async def https_redirect(request: Request):
+#     return RedirectResponse(request.url.replace(scheme='https'))
+
 @app.get("/")
 @app.get("/homepage", status_code=status.HTTP_200_OK)
 def homepage():
     return {"message": "This is the Image Tiler Homepage!"}
 
-# 瓦片服务接口
+# 瓦片服务接口 
 @app.get("/service/satellite/tile/{zoom}/{x}/{y}")
-def get_tile(zoom: int, x: int, y: int):
+async def get_tile(zoom: int, x: int, y: int):
     data = tu.search_tile(zoom, x, y)
     res = Response(data)
     res.headers["Content-Type"] = "image/png"
@@ -31,8 +34,14 @@ def get_tile(zoom: int, x: int, y: int):
 
 # http://10.168.1.105:8002/question?id=1
 @app.get("/question")
-def get_question(id: int):
+async def get_question(id: int):
     return {"id": id, "question": "What's your name?"}
+
+
+# Optional 可选参数
+@app.get("/items/{item_id}")
+async def read_item(item_id: int, question: Optional[str] = None):
+    return {"item_id": item_id, "question": question}
 
 
 
