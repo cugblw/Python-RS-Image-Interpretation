@@ -1,9 +1,10 @@
-import math
 import os
-import re
+import math
 import operator
+
 from osgeo import gdal
-from get_image_info import get_metadata
+
+from get_image_info import get_metadata,get_geotiff_epsg
 
 
 def get_image_size(img_path):
@@ -14,9 +15,18 @@ def get_image_size(img_path):
 
 def get_image_resolution(img_path):
     dataset = gdal.Open(img_path)
+    epsg = get_geotiff_epsg(img_path)
+    if epsg != '4326':
+        xres, yres = operator.itemgetter(1,5)(dataset.GetGeoTransform())
+        if xres < 0:
+            xres = -xres
+        if yres < 0:
+            yres = -yres
+        return [xres, yres]
+    else:
+        xres, yres = operator.itemgetter(1,5)(dataset.GetGeoTransform())
 
-    xres, yres = operator.itemgetter(1,5)(dataset.GetGeoTransform())
-    return [xres, yres]
+        return convert_resolution_wgs84([xres, yres])
     # print(xres,yres)
 
 def convert_resolution_wgs84(resolution_xy):
@@ -34,9 +44,9 @@ def convert_resolution_wgs84(resolution_xy):
 
 if __name__ == '__main__':
 
-    size = get_image_size(r"E:\Data\test\lanzhou_2m.tif")
-    resolution_xy = get_image_resolution(r"E:\Data\test\lanzhou_2m.tif")
+    size = get_image_size(r"C:\Users\Administrator\Desktop\data\beijing_clip.tif")
+    resolution_xy = get_image_resolution(r"C:\Users\Administrator\Desktop\data\beijing_clip.tif")
     print(size)
     print(resolution_xy)
-    resolution_xy = convert_resolution_wgs84(resolution_xy)
-    print(resolution_xy)
+    # resolution_xy = convert_resolution_wgs84(resolution_xy)
+    # print(resolution_xy)
