@@ -72,8 +72,12 @@ def update_tile(base_tile_dir,regional_tile_dir):
             print("Update tile: " + tile_name)
 
         else:
-            tile_resolution = get_img_info(Image.open(tile))
-            base_tile_resolution = get_img_info(Image.open(os.path.join(base_tile_dir, base_tile_name)))
+            try:
+                tile_resolution = get_img_info(Image.open(tile))
+                base_tile_resolution = get_img_info(Image.open(os.path.join(base_tile_dir, base_tile_name)))
+            except:
+                print("Error: This lile has no resolution info, please check it!")
+                exit(1)
             # print("Tile resolution: " + tile_resolution)
             # print("Base tile resolution: " + base_tile_resolution)
             if base_tile_resolution == '0.5m':
@@ -103,8 +107,6 @@ def update_tile(base_tile_dir,regional_tile_dir):
             else:
                 print("Error: Tile resolution is not compatible with base tile resolution")
                 exit(1)
-
-
 
 
 if __name__ == '__main__':
