@@ -123,7 +123,7 @@ class FilterFullTile(object):
                 if file.endswith(".tar"):
                     tar_file = tarfile.open(os.path.join(root, file))
                     members = tar_file.getmembers()
-                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
+                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+".tar"), 'w') as tar:
                         for member in members:
                             image = tar_file.extractfile(member)
                             image = image.read()
@@ -156,7 +156,7 @@ class FilterFullTileExcludeCostal(object):
                 if file.endswith(".tar"):
                     tar_file = tarfile.open(os.path.join(root, file))
                     members = tar_file.getmembers()
-                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
+                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+".tar"), 'w') as tar:
                         for member in members:
                             image = tar_file.extractfile(member)
                             image = image.read()
@@ -219,9 +219,9 @@ class FilterFullTileExcludeCostal(object):
 
 if __name__ == '__main__':
     # 指定tar包的原始路径
-    tar_path = r'C:\Users\cugbl\Desktop\16m'
+    tar_path = r'C:\Users\Administrator\Desktop\16m'
     # 指定新的tar包的路径
-    new_path = r'C:\Users\cugbl\Desktop\new'
+    new_path = r'C:\Users\Administrator\Desktop\new'
     zoom_range = [1,22]
     
     time_start = time.time()

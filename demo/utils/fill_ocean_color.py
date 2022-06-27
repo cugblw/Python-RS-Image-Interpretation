@@ -34,7 +34,7 @@ class FillOCeanColor(object):
                 if file.endswith('.tar'):
                     tar_file = tarfile.open(os.path.join(root, file))
                     members = tar_file.getmembers()
-                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+"_new.tar"), 'w') as tar:
+                    with tarfile.open(os.path.join(self.new_path, file.split(".")[0]+".tar"), 'w') as tar:
                         for member in members:
                             image = tar_file.extractfile(member)
                             image = image.read()
@@ -65,8 +65,8 @@ class FillOCeanColor(object):
 
 
 if __name__ == '__main__':
-    tar_path = r"C:\Users\cugbl\Desktop\out"
-    new_path = r"C:\Users\cugbl\Desktop\new"
+    tar_path = r"C:\Users\Administrator\Desktop\16m"
+    new_path = r"C:\Users\Administrator\Desktop\new"
     # 海洋填充背景颜色
     color = "#131D29"
     fc = FillOCeanColor(tar_path, new_path, color)
