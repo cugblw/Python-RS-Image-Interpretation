@@ -116,26 +116,6 @@ def request_tile(zoom,x,y,tile_dir,index_dir):
             tile_path = os.path.join(tile_dir,generate_file_name("satellite", zoom_parent, x_parent, y_parent))
             
         elif zoom >= start_zoom and zoom <= end_zoom:
-            # print(len(index_data))
-            # tile_path = os.path.join(tile_dir,generate_file_name("satellite", zoom, x, y))
-            # before_zoom_length = bs.sum_bytes_length(4,0,zoom-11)
-            # zoom_bits_length = bs.cal_bytes_length(4,(zoom-10))
-            # # index_data_zoom = index_data[]
-            # # print(x-(int(x>>(zoom-10)<<(zoom-10))),y-(int(y>>(zoom-10)<<(zoom-10))))
-            # morton_code = pm.interleave(x-(int(x>>(zoom-10)<<(zoom-10))),y-(int(y>>(zoom-10)<<(zoom-10))))
-            # # print(pm.interleave(x-(int(x>>(zoom-10)<<(zoom-10))),y-(int(y>>(zoom-10)<<(zoom-10)))))
-            # # print(len(index_data))
-            # # print(zoom_bits_length)
-            # # print(before_zoom_length)
-            # zoom_index_data = index_data[before_zoom_length:before_zoom_length+zoom_bits_length][math.ceil(morton_code/8)]
-            # tile_bit = bin(zoom_index_data)[2:].zfill(8)[morton_code - int(morton_code/8)*8]
-            # if tile_bit == '1':
-            #     print("find tile:",tile_path)
-            #     return tile_path
-            # else:
-            #     search_parent_tile = get_parent_tile(zoom,x,y)
-
-            # print(bin(zoom_index_data)[2:].zfill(8)[morton_code - int(morton_code/8)*8])
             tile_path = search_partent_tile_recursively(zoom,x,y,tile_dir,index_dir,index_data)
             return tile_path
             
@@ -154,6 +134,6 @@ if __name__ == '__main__':
     # # request_tile(14,12908,6426,tile_dir,index_dir)
     # tile_exist = request_tile(16,51643,25721,tile_dir,index_dir)
     # tile_path = request_tile(18,206545,102854,tile_dir,index_dir)
-    tile_path = request_tile(18, 215517, 98789,tile_dir,index_dir)
+    tile_path = request_tile(18, 206624, 102845,tile_dir,index_dir)
     print(tile_path)
     # index_file = r"C:\Users\Administrator\Desktop\tile_index\satellite\index"

@@ -1,6 +1,8 @@
 import os
 import tarfile
 
+from numpy import tile
+
 import tile_lon_lat_convert as tc
 
 
@@ -15,9 +17,9 @@ def get_tile_id_from_ruleless_tar(tar_path):
         if file_name.endswith('.tar'):
             tar_list.append(os.path.join(tar_path,file_name))
 
-    zoom_list = []
     tile_id_dict = {}
     for tar_file in tar_list:
+        zoom_list = []
         with tarfile.open(tar_file,'r') as tar:
             members = tar.getnames()
             for member in members:
@@ -36,7 +38,10 @@ def get_tile_id_from_ruleless_tar(tar_path):
                         if tile_id not in tile_id_list:
                             tile_id_list.append(tile_id)
                         if tile_id not in tile_id_dict.keys():
-                            tile_id_dict[tile_id] = tar_file
+                            tile_id_dict[tile_id] = []
+                            tile_id_dict[tile_id].append(tar_file)
+                        else:
+                            tile_id_dict[tile_id].append(tar_file)
                 except:
                     continue
         tar.close()
@@ -62,19 +67,20 @@ def get_tar_list_from_tile_id_dict(tile_id_dict):
         elif int(tile_xyz[0]) > 10:
             x_min,x_max,y_min,y_max,z = tc.high_room_tile_to_low_room_tile(int(tile_xyz[1]),int(tile_xyz[2]),int(tile_xyz[0]),10)
             tile_id_target = str(z) + '_' + str(x_min) + '_' + str(y_min)
+
             if tile_id_target not in tar_list_dict.keys():
                 tar_list_dict[tile_id_target] = []
-                tar_list_dict[tile_id_target].append(tile_id_dict[tile_id])
+                for tar_file in tile_id_dict[tile_id]:
+                    tar_list_dict[tile_id_target].append(tar_file)
             else:
-                tar_list_dict[tile_id_target].append(tile_id_dict[tile_id])
+                for tar_file in tile_id_dict[tile_id]:
+                    tar_list_dict[tile_id_target].append(tar_file)
         else:
             pass
 
     for tar_id in tar_list_dict.keys():
         tar_list_dict[tar_id] = list(set(tar_list_dict[tar_id]))
     
-    print(tar_list_dict)
-    print(len(tar_list_dict))
     return tar_list_dict
 
         
@@ -84,4 +90,5 @@ def get_tar_list_from_tile_id_dict(tile_id_dict):
 if __name__ == '__main__':
     tar_path = r"C:\Users\Administrator\Desktop\tar_test"
     tile_id_dict = get_tile_id_from_ruleless_tar(tar_path)
-    get_tar_list_from_tile_id_dict(tile_id_dict)
+    tar_list_dict= get_tar_list_from_tile_id_dict(tile_id_dict)
+    print(tar_list_dict)

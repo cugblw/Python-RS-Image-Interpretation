@@ -112,9 +112,9 @@ def create_global_index_file(start_zoom, end_zoom,index_dir):
 if __name__ == '__main__':
     start_zoom = 10
     end_zoom = 18
-    tar_dir = r"C:\Users\Administrator\Desktop\05m"
-    tile_dir = r"C:\Users\Administrator\Desktop\05m"
-    index_dir = r"C:\Users\Administrator\Desktop\index\05m"
+    tar_dir = r"C:\Users\Administrator\Desktop\2m"
+    tile_dir = r"C:\Users\Administrator\Desktop\2m"
+    index_dir = r"C:\Users\Administrator\Desktop\index\2m"
     tile_list = ci.get_tile_id_from_tar(tar_dir)
     tile_list_convert = ci.convert_tile_id(tile_list)
 

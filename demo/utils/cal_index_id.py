@@ -53,6 +53,7 @@ def get_tile_id_from_tar(tar_path):
     tar_list.extend(tar_id_lower_list)
     return tar_list
 
+
 def get_tile_id_dict_from_ruleless_tar(tar_path):
     """
     获取无规则tar包瓦片编号
@@ -64,15 +65,15 @@ def get_tile_id_dict_from_ruleless_tar(tar_path):
         if file_name.endswith('.tar'):
             tar_list.append(os.path.join(tar_path,file_name))
 
-    zoom_list = []
     tile_id_dict = {}
     for tar_file in tar_list:
+        zoom_list = []
         with tarfile.open(tar_file,'r') as tar:
             members = tar.getnames()
             for member in members:
                 try:
                     zoom = int(member.split('/')[1])
-                    if zoom not in zoom_list and zoom >= 10 and zoom <=18:
+                    if zoom not in zoom_list and zoom >= 10:
                         zoom_list.append(zoom)
                 except:
                     continue
@@ -85,15 +86,19 @@ def get_tile_id_dict_from_ruleless_tar(tar_path):
                         if tile_id not in tile_id_list:
                             tile_id_list.append(tile_id)
                         if tile_id not in tile_id_dict.keys():
-                            tile_id_dict[tile_id] = tar_file
+                            tile_id_dict[tile_id] = []
+                            tile_id_dict[tile_id].append(tar_file)
+                        else:
+                            tile_id_dict[tile_id].append(tar_file)
                 except:
                     continue
         tar.close()
     return tile_id_dict
 
+
 def get_tar_list_dict_from_ruleless_tar(tar_path):
     """
-    获取tar包dict
+    获取tar包列表
     """
     tile_id_dict = get_tile_id_dict_from_ruleless_tar(tar_path)
     tar_list_dict = {}
@@ -112,11 +117,14 @@ def get_tar_list_dict_from_ruleless_tar(tar_path):
         elif int(tile_xyz[0]) > 10:
             x_min,x_max,y_min,y_max,z = tc.high_room_tile_to_low_room_tile(int(tile_xyz[1]),int(tile_xyz[2]),int(tile_xyz[0]),10)
             tile_id_target = str(z) + '_' + str(x_min) + '_' + str(y_min)
+
             if tile_id_target not in tar_list_dict.keys():
                 tar_list_dict[tile_id_target] = []
-                tar_list_dict[tile_id_target].append(tile_id_dict[tile_id])
+                for tar_file in tile_id_dict[tile_id]:
+                    tar_list_dict[tile_id_target].append(tar_file)
             else:
-                tar_list_dict[tile_id_target].append(tile_id_dict[tile_id])
+                for tar_file in tile_id_dict[tile_id]:
+                    tar_list_dict[tile_id_target].append(tar_file)
         else:
             pass
 
@@ -124,7 +132,6 @@ def get_tar_list_dict_from_ruleless_tar(tar_path):
         tar_list_dict[tar_id] = list(set(tar_list_dict[tar_id]))
     
     return tar_list_dict
-
 
 
 def convert_tile_id(tile_id_list,target_zoom = 10):

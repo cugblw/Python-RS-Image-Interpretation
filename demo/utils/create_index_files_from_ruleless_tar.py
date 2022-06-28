@@ -107,6 +107,9 @@ def create_index_file_from_ruleless_tar(start_zoom, end_zoom, tar_list_dict, ind
         ctr.search_tile_from_tar_recursively(zoom, x, y, end_zoom, members_list, morton_dict)
         morton_dict = dict(sorted(morton_dict.items(), key=lambda x: x[0]))
 
+        if zoom == 10 and x == 807 and y == 401:
+            print('zoom', zoom, 'x', x, 'y', y)
+
         bits_chain = "".join(list(chain(*morton_dict.values())))
         bits_chain,end_zoom_new = bi.remove_invalid_bits(bits_chain)
         bits_chain_full = bi.concatenate_bits_chain(bits_chain)

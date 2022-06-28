@@ -124,19 +124,31 @@ def concatenate_bits_chain(bits_chain):
 def remove_invalid_bits(bits_chain):
     """移除无效的bits，同时返回新的end_zoom"""
     start_zoom = 10
+    bits_chain_4_5 = bits_chain[sum_bits_length(4,0,4):sum_bits_length(4,0,5)]
+    bits_chain_5_6 = bits_chain[sum_bits_length(4,0,5):sum_bits_length(4,0,6)]
+    bits_chain_6_7 = bits_chain[sum_bits_length(4,0,6):sum_bits_length(4,0,7)]
+    bits_chain_7_8 = bits_chain[sum_bits_length(4,0,7):sum_bits_length(4,0,8)]
+
     if len(bits_chain) <= sum_bits_length(4,0,4):
         return bits_chain, start_zoom+4
-        
-    elif bits_chain[sum_bits_length(4,0,4):sum_bits_length(4,0,5)] == '0'*cal_bits_length(4,5):
+
+    elif (bits_chain_4_5 == '0'*cal_bits_length(4,5) and
+          bits_chain_5_6 == '0'*cal_bits_length(4,6) and
+          bits_chain_6_7 == '0'*cal_bits_length(4,7) and 
+          bits_chain_7_8 == '0'*cal_bits_length(4,8)):
+            # return bits_chain[0:sum_bits_length(4,0,5)], start_zoom+5
         return bits_chain[0:sum_bits_length(4,0,4)], start_zoom+4
         
-    elif bits_chain[sum_bits_length(4,0,5):sum_bits_length(4,0,6)] == '0'*cal_bits_length(4,6):
+    elif (bits_chain_5_6 == '0'*cal_bits_length(4,6) and 
+          bits_chain_6_7 == '0'*cal_bits_length(4,7) and 
+          bits_chain_7_8 == '0'*cal_bits_length(4,8)):
         return bits_chain[0:sum_bits_length(4,0,5)], start_zoom+5
         
-    elif bits_chain[sum_bits_length(4,0,6):sum_bits_length(4,0,7)] == '0'*cal_bits_length(4,7):
+    elif (bits_chain_6_7 == '0'*cal_bits_length(4,7) and 
+          bits_chain_7_8 == '0'*cal_bits_length(4,8)):
         return bits_chain[0:sum_bits_length(4,0,6)], start_zoom+6
         
-    elif bits_chain[sum_bits_length(4,0,7):sum_bits_length(4,0,8)] == '0'*cal_bits_length(4,8):
+    elif bits_chain_7_8 == '0'*cal_bits_length(4,8):
         return bits_chain[0:sum_bits_length(4,0,7)], start_zoom+7
         
     else:
