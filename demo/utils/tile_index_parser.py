@@ -148,12 +148,12 @@ def request_tile(zoom,x,y,tile_dir,index_dir):
 
         
 if __name__ == '__main__':
-    tile_dir = r"C:\Users\cugbl\Desktop\2m"
-    index_dir = r"C:\Users\cugbl\Desktop\index16m"
+    tile_dir = r"C:\Users\Administrator\Desktop\tar_test"
+    index_dir = r"C:\Users\Administrator\Desktop\index\test"
 
     # # request_tile(14,12908,6426,tile_dir,index_dir)
     # tile_exist = request_tile(16,51643,25721,tile_dir,index_dir)
     # tile_path = request_tile(18,206545,102854,tile_dir,index_dir)
-    tile_path = request_tile(16,51631,25708,tile_dir,index_dir)
+    tile_path = request_tile(18, 215517, 98789,tile_dir,index_dir)
     print(tile_path)
     # index_file = r"C:\Users\Administrator\Desktop\tile_index\satellite\index"

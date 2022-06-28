@@ -11,6 +11,7 @@
 
 
 import os
+import tarfile
 
 import pymorton as pm
 
@@ -32,7 +33,7 @@ def generate_file_name(source_name, z, x, y):
 
 def generate_tar_list_by_tileId(tile_id,tar_dir):
     """根据瓦片编号生成tar包列表"""
-    zoom_index_list = [8, 10, 12]
+    zoom_index_list = [8, 9, 10, 11, 12, 13]
     zoom = int(tile_id.split('_')[0])
     x = int(tile_id.split('_')[1])
     y = int(tile_id.split('_')[2])
@@ -191,10 +192,15 @@ if __name__ == "__main__":
     # print("time:",str((end_time - start_time)) + "s")
 
     tile_id = "10_806_401"
-    tar_dir = r"C:\Users\cugbl\Desktop\05m"
+    tar_dir = r"C:\Users\Administrator\Desktop\16m"
     tar_list = generate_tar_list_by_tileId(tile_id, tar_dir)
     print(tar_list)
+    members_list = []
+    for tar_file in tar_list:
+        with tarfile.open(tar_file,'r') as tar:
+            members = tar.getnames()
+            members_list.extend(members)
 
     # tile_exist =check_tile_exist_tar(17,103296,51418,tar_list)
-    tile_exist =check_tile_exist_tar(17,103273,51422,tar_list)
+    tile_exist =check_tile_exist_tar(8,201,100,members_list)
     print(tile_exist)
