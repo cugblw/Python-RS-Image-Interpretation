@@ -68,8 +68,12 @@ def update_tile(base_tile_dir,regional_tile_dir):
         zoom, x, y = tile_id.split('_')[0], tile_id.split('_')[1], tile_id.split('_')[2]
         base_tile_name = generate_file_name("satellite", int(zoom), int(x), int(y))
         if not os.path.exists( os.path.join(base_tile_dir, base_tile_name)):
+            base_dir = os.path.dirname(os.path.join(base_tile_dir, base_tile_name))
+            if not os.path.exists(base_dir):
+                os.makedirs(base_dir)
             shutil.copy(tile, os.path.join(base_tile_dir, base_tile_name))
             print("Update tile: " + tile_name)
+
 
         else:
             try:

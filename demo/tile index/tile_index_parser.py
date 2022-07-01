@@ -9,6 +9,7 @@
 @Desc    :   解析索引文件
 '''
 
+import base64
 import math
 import os
 import pymorton as pm
@@ -102,6 +103,9 @@ def request_tile(zoom,x,y,tile_dir,index_dir):
             
     else:
         index_file = get_index(zoom,x,y,index_dir)
+        if index_file is None:
+            print("there is no tile for the request.")
+            return None
         header_info = bs.read_index_header(index_file)
         index_data = bs.read_index_data(index_file)
         start_zoom = header_info[0]
@@ -126,6 +130,83 @@ def request_tile(zoom,x,y,tile_dir,index_dir):
             tile_path = search_partent_tile_recursively(zoom_parent,x_parent,y_parent,tile_dir,index_dir,index_data)
             return tile_path
 
+def get_tile_data(zoom,x,y,tile_dir,index_dir):
+    """
+    搜索瓦片是否存在，不存在则向上请求父级瓦片，直到找到瓦片为止
+    """
+    if zoom <= 14:
+        tile_path = os.path.join(tile_dir,generate_file_name("satellite", zoom, x, y))
+        
+        if os.path.exists(tile_path):
+            # print("find tile:",tile_path)
+            # return tile_path
+            with open(tile_path, "rb") as f:
+                data = f.read()
+                return data
+        else:
+            print("tile not found.")
+            blank = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg=="
+            img = base64.b64decode(blank)
+            return img
+            
+    else:
+        index_file = get_index(zoom,x,y,index_dir)
+        if index_file is None:
+            print("there is no tile for the request.")
+            return None
+        header_info = bs.read_index_header(index_file)
+        index_data = bs.read_index_data(index_file)
+        start_zoom = header_info[0]
+        end_zoom = header_info[1]
+        # print("start_zoom:",start_zoom,"end_zoom:",end_zoom)
+        
+        if end_zoom == 14:
+            print("there is no current tile, use its parent tile with zoom equal 14.")
+            x_parent = int(x>>(zoom-14))
+            y_parent = int(y>>(zoom-14))
+            zoom_parent = 14
+            tile_path = os.path.join(tile_dir,generate_file_name("satellite", zoom_parent, x_parent, y_parent))
+            # return tile_path
+            if os.path.exists(tile_path):
+                with open(tile_path, "rb") as f:
+                    data = f.read()
+                    return data
+            else:
+                print("tile not found.")
+                blank = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg=="
+                img = base64.b64decode(blank)
+                return img
+
+            
+        elif zoom >= start_zoom and zoom <= end_zoom:
+            tile_path = search_partent_tile_recursively(zoom,x,y,tile_dir,index_dir,index_data)
+            # return tile_path
+            if os.path.exists(tile_path):
+                with open(tile_path, "rb") as f:
+                    data = f.read()
+                    return data
+            else:
+                print("tile not found.")
+                blank = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg=="
+                img = base64.b64decode(blank)
+                return img
+            
+        else:
+            x_parent = int(x>>(zoom-18))
+            y_parent = int(y>>(zoom-18))
+            zoom_parent = 18
+            tile_path = search_partent_tile_recursively(zoom_parent,x_parent,y_parent,tile_dir,index_dir,index_data)
+            # return tile_path
+            if os.path.exists(tile_path):
+                with open(tile_path, "rb") as f:
+                    data = f.read()
+                    return data
+            else:
+                print("tile not found.")
+                blank = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg=="
+                img = base64.b64decode(blank)
+                return img
+
         
 if __name__ == '__main__':
     tile_dir = r"C:\Users\Administrator\Desktop\tar_test"
@@ -134,6 +215,6 @@ if __name__ == '__main__':
     # # request_tile(14,12908,6426,tile_dir,index_dir)
     # tile_exist = request_tile(16,51643,25721,tile_dir,index_dir)
     # tile_path = request_tile(18,206545,102854,tile_dir,index_dir)
-    tile_path = request_tile(18, 206624, 102845,tile_dir,index_dir)
+    tile_path = request_tile(17, 206624, 102845,tile_dir,index_dir)
     print(tile_path)
     # index_file = r"C:\Users\Administrator\Desktop\tile_index\satellite\index"

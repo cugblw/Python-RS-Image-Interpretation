@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+    <meta name="Keywords" content="MineData">
+    <meta name="Description" content="MineData">
+    <meta name="robots" content="none">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="maximum-scale=1.0"/>
+    <title>查看瓦片服务</title></title>
+    <link rel="stylesheet" href="/static/css/minemap.css">
+    <script type="text/javascript" src="../static/js/jquery-1.12.3.min.js"></script>
+    <script src="/static/js/minemap.js"></script>
+    <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            font-family: "Microsoft YaHei", "微软雅黑";
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+
+<script>
+    /**
+     * 基本地图加载
+     * 地图缩放级别限制
+     */
+    var service = {{projection|tojson}};
+    service = (service === "MECATOR") ? "MECATOR" : minemap.ProjectionType.LATLON;
+    
+    // console.log(projection)
+    var map = new minemap.Map({
+        container: 'map',
+        style: {{ style|tojson }},
+		center: {{ center }},
+        zoom: {{ zoom }},
+        pitch: 0,
+        maxZoom: 22, //地图最大缩放级别限制
+        minZoom:0, //地图最小缩放级别限制
+        projection: service
+    });
+    // let lastZoom = map.getZoom();
+    // map.on("moveend", function () {
+    //     const zoom = map.getZoom();
+    //     if (lastZoom < zoom) {
+    //         lastZoom = Math.ceil(zoom);
+    //         map.easeTo({zoom: lastZoom});
+    //     } else if (lastZoom > zoom) {
+    //         lastZoom = Math.floor(zoom);
+    //         map.easeTo({zoom: lastZoom});
+    //     }
+    // });
+    map.showTileBoundaries=true
+</script>
+</body>
+
