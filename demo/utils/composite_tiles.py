@@ -1,3 +1,15 @@
+# -*- encoding: utf-8 -*-
+
+'''
+@File    :   composite_tiles.py
+@Time    :   2022/07/13 12:15:52
+@Author  :   Lee
+@Version :   1.0
+@License :   (C)Copyright Cennavi, Li Wei
+@Desc    :   None
+'''
+
+
 import os
 import io
 import logging
@@ -48,10 +60,8 @@ def get_tar_list_by_tileId(zoom,x,y,tar_dir):
     elif zoom <= 16:
         zoom_index_list=[8,10,13]
     else:
-        zoom_index_list = [13]
-    # zoom = int(tile_id.split('_')[0])
-    # x = int(tile_id.split('_')[1])
-    # y = int(tile_id.split('_')[2])
+        zoom_index_list = [10,13]
+
     tar_list = []
     for zoom_index in zoom_index_list:
         if zoom_index < zoom:
@@ -181,7 +191,8 @@ if __name__ == '__main__':
     # 合成瓦片输出路径
     output_path = 'C:/Users/Administrator/Desktop/new'
     # 指定进程数
-    pool = Pool(processes=6)
+    composite_pool = Pool(processes=6)
+    roll_pool = Pool(processes=6)
     
     start_time = time.time()
 
@@ -193,16 +204,16 @@ if __name__ == '__main__':
         os.makedirs(temp_path)
     raster_zip_list = get_raster_zip_list(raster_zip_path)
     partial_composite = partial(composite_tiles, image_tar_path, temp_path)
-    pool.map_async(partial_composite, raster_zip_list)
-    pool.close()
-    pool.join()
+    composite_pool.map_async(partial_composite, raster_zip_list)
+    composite_pool.close()
+    composite_pool.join()
 
     # 输出所有的影像瓦片
     image_tar_list = get_image_tar_list(image_tar_path)
     partial_roll = partial(roll_all_image_tiles, temp_path, output_path)
-    pool.map_async(partial_roll, image_tar_list)
-    pool.close()
-    pool.join()
+    roll_pool.map_async(partial_roll, image_tar_list)
+    roll_pool.close()
+    roll_pool.join()
     # roll_all_image_tiles(image_tar_path, temp_path, output_path)
 
     # 删除临时文件
