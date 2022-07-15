@@ -25,7 +25,7 @@ def create_gif(image_list, gif_name, fps = 2):
     # sort the image list by date
     image_list.sort(key = lambda x: time.mktime(time.strptime(x.split('/')[-1].split("_")[-1].split('.')[0],"%Y-%m-%d")))
     for image_name in image_list:
-        frames.append(imageio.imread(image_name))
+        frames.append(imageio.imread(image_name).resize((0.2,0.2)))
 
     imageio.mimsave(gif_name, frames, fps=fps)
     return
