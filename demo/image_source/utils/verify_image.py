@@ -17,7 +17,7 @@ def check_image(img_path):
     """
     check if the image is valid
     :param img_path: image path
-    :return: True or False
+    :return: True or False, description
     """
     description = None
     if not img_path.endswith('tif'):

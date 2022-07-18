@@ -21,6 +21,11 @@ from shapely.geometry import Polygon
 
 
 def get_image_info(image_path):
+    """
+    get image information
+    :param image_path: image path
+    :return: image information
+    """
     image_info_dict = gdal.Info(image_path, format='json')
 
     name = os.path.basename(image_info_dict['description'])
@@ -64,7 +69,7 @@ def get_invalid_image_info(image_path, description):
     """
     :param image_path:
     :param description:
-    :return:
+    :return: invalid image info
     """
     invalid_image_info = {}
     name = os.path.basename(image_path)
