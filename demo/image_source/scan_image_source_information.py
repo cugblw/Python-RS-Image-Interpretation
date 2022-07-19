@@ -16,7 +16,7 @@
 import os
 
 from utils.verify_image import check_image
-from utils.create_database import create_connection,create_table, insert_or_update_data,insert_or_update_error_data
+from utils.database_manipulation import create_connection,create_table, insert_or_update_data,insert_or_update_error_data
 from utils.get_image_metadata import get_image_info, get_invalid_image_info
 
 
@@ -46,6 +46,6 @@ def main(image_dir, db_file):
 
 
 if __name__ == "__main__":
-    image_dir = r"E:\Data\tiff\11"
+    image_dir = r"C:\Users\Administrator\Desktop\local_update"
     db_file = r"demo\image_source\database\image_source_infomation.db"
     main(image_dir, db_file)

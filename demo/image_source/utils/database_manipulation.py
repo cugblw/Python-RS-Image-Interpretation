@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 '''
-@File    :   create_database.py
+@File    :   database_manipulation.py
 @Time    :   2022/07/18 10:48:34
 @Author  :   Lee
 @Version :   1.0
@@ -125,8 +125,28 @@ def insert_or_update_error_data(db_file,invalide_image_info):
         print('database not exists')
 
 
+def select_data(db_file):
+    """
+    select data from the database
+    :param db_file: database file
+    :return:
+    """
+    conn = create_connection(db_file)
+    if conn:
+        cur = conn.cursor()
+        sql = '''SELECT * FROM image_infomation'''
+        cur.execute(sql)
+        rows = cur.fetchall()
+        conn.close()
+        return rows
+    else:
+        print('database not exists')
+
+
 if __name__ == '__main__':
     database_path = r'demo\image_source\database\image_source_infomation.db'
     image_path = r"D:\lanzhou_2m.tif"
     create_connection(database_path)
     create_table(database_path)
+    rows = select_data(database_path)
+    print(len(rows))

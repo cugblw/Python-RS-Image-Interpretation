@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 '''
-@File    :   read_geotiff.py
+@File    :   get_image_metadata.py
 @Time    :   2022/07/18 13:43:02
 @Author  :   Lee
 @Version :   1.0
