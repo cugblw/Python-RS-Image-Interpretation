@@ -11,6 +11,7 @@
 
 
 import os
+from sre_constants import CALL
 
 from osgeo import gdal
 from osgeo import ogr
@@ -19,6 +20,7 @@ from shapely.geometry import Polygon
 import geopandas as gpd
 
 from database_manipulation import select_data
+from tile_lon_lat_convert import x_to_lon_edges
 # from utils.database_manipulation import select_data
 
 
@@ -102,11 +104,8 @@ def calculate_buffer_distance(zoom_level):
     :param image_path:
     :return: buffer distance
     """
-    image_info_dict = gdal.Info(image_path, format='json')
-    coordinates = image_info_dict['wgs84Extent']['coordinates'][0]
-    geometry = str(Polygon(coordinates))
-    geometry = wkt.loads(geometry)
-    buffer_distance = geometry.area / 100
+    lon1, lon2 = x_to_lon_edges(1, zoom_level)
+    buffer_distance = (lon2 - lon1) / 2
     return buffer_distance
 
 
@@ -122,14 +121,29 @@ def generate_geometry_buffer(geometry, buffer_distance):
     return buffer_geometry
 
 
-if __name__ == "__main__":
-    image_path = r"C:\Users\Administrator\Desktop\2_贵阳替云_preview.tif"
-    db_file = r"demo\image_source\database\image_source_infomation.db"
-    image_geometry = get_image_geometry(image_path)
-    intersecting_image_list = get_intersecting_images(image_path, db_file)
-    print(intersecting_image_list)
+def generate_zoom_level_geometry(image_geometry, zoom_level):
+    """
+    generate zoom level geometry
+    :param geometry:
+    :param zoom_level:
+    :return: zoom level geometry
+    """
     bbox = geometry_to_bounding_box(image_geometry)
-    get_clipped_image(image_path, bbox)
-    print(image_geometry)
-    geometry_buffer = generate_geometry_buffer(image_geometry, 1)
-    print(geometry_buffer)
+    
+    buffer_distance = calculate_buffer_distance(zoom_level)
+    buffer_geometry = generate_geometry_buffer(geometry, buffer_distance)
+    return buffer_geometry
+
+
+if __name__ == "__main__":
+    # image_path = r"C:\Users\Administrator\Desktop\2_贵阳替云_preview.tif"
+    # db_file = r"demo\image_source\database\image_source_infomation.db"
+    # image_geometry = get_image_geometry(image_path)
+    # intersecting_image_list = get_intersecting_images(image_path, db_file)
+    # print(intersecting_image_list)
+    # bbox = geometry_to_bounding_box(image_geometry)
+    # get_clipped_image(image_path, bbox)
+    # print(image_geometry)
+    # geometry_buffer = generate_geometry_buffer(image_geometry, 1)
+    # print(geometry_buffer)
+    print(calculate_buffer_distance(10))
