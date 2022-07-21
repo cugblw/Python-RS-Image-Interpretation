@@ -19,8 +19,8 @@ from shapely import wkt
 from shapely.geometry import Polygon
 import geopandas as gpd
 
-from database_manipulation import select_data
-from tile_lon_lat_convert import x_to_lon_edges
+from utils.database_manipulation import select_data
+import utils.tile_lon_lat_convert as tc
 # from utils.database_manipulation import select_data
 
 
@@ -36,21 +36,21 @@ def get_image_geometry(image_path):
     return geometry
 
 
-def clip_image_by_geometry(image_path, clip_geometry):
-    """
-    clip image by geometry
-    :param image_path:
-    :param clip_geometry:
-    :return:
-    """
-    image_info_dict = gdal.Info(image_path, format='json')
-    coordinates = image_info_dict['wgs84Extent']['coordinates'][0]
-    geometry = str(Polygon(coordinates))
-    intersection = ogr.CreateGeometryFromWkt(clip_geometry).Intersection(ogr.CreateGeometryFromWkt(geometry))
-    if intersection.GetArea() > 0:
-        return True
-    else:
-        return False
+# def clip_image_by_geometry(image_path, clip_geometry):
+#     """
+#     clip image by geometry
+#     :param image_path:
+#     :param clip_geometry:
+#     :return:
+#     """
+#     image_info_dict = gdal.Info(image_path, format='json')
+#     coordinates = image_info_dict['wgs84Extent']['coordinates'][0]
+#     geometry = str(Polygon(coordinates))
+#     intersection = ogr.CreateGeometryFromWkt(clip_geometry).Intersection(ogr.CreateGeometryFromWkt(geometry))
+#     if intersection.GetArea() > 0:
+#         return True
+#     else:
+#         return False
 
 
 def get_intersecting_images(update_image_path, db_file):
@@ -61,7 +61,6 @@ def get_intersecting_images(update_image_path, db_file):
     :return:
     """
     update_image_geometry = get_image_geometry(update_image_path)
-    print(type(update_image_geometry))
     image_infomation_list = select_data(db_file)
     intersecting_image_list = []
     for image_infomation in image_infomation_list:
@@ -74,28 +73,25 @@ def get_intersecting_images(update_image_path, db_file):
     return intersecting_image_list
 
     
-def geometry_to_bounding_box(geometry):
+def geometry_to_bbox(geometry):
     """
-    geometry to bounding box
+    geometry to bbox
     :param geometry:
-    :return: bounding box
+    :return: bbox
     """
     geometry = wkt.loads(geometry)
     bbox = geometry.bounds
     return bbox
 
 
-def get_clipped_image(image_path, clip_bbox):
+def bbox_to_geometry(bbox):
     """
-    clip image
-    :param image_path:
-    :param clip_geometry:
-    :return:
+    bbox to geometry
+    :param bbox:
+    :return: geometry
     """
-    image_path = r"C:\Users\Administrator\Desktop\local_update\1_A2包_5_9_preview.tif"
-    output_path = image_path.replace('.tif', '_clipped.tif')
-    # bbox = (106.0038133, 26.4052118, 107.1301093, 27.3620738)
-    gdal.Translate(output_path, image_path, format='GTiff', outputBounds=clip_bbox, options=['-co', 'BIGTIFF=YES'])
+    geometry = Polygon([(bbox[0], bbox[1]), (bbox[0], bbox[3]), (bbox[2], bbox[3]), (bbox[2], bbox[1])])
+    return str(geometry)
 
 
 def calculate_buffer_distance(zoom_level):
@@ -104,7 +100,7 @@ def calculate_buffer_distance(zoom_level):
     :param image_path:
     :return: buffer distance
     """
-    lon1, lon2 = x_to_lon_edges(1, zoom_level)
+    lon1, lon2 = tc.x_to_lon_edges(1, zoom_level)
     buffer_distance = (lon2 - lon1) / 2
     return buffer_distance
 
@@ -118,32 +114,24 @@ def generate_geometry_buffer(geometry, buffer_distance):
     """
     geometry = wkt.loads(geometry)
     buffer_geometry = geometry.buffer(buffer_distance, join_style=2)
-    return buffer_geometry
+    return str(buffer_geometry)
 
 
-def generate_zoom_level_geometry(image_geometry, zoom_level):
+def generate_zoom_level_geometry_bbox(image_geometry, zoom_level):
     """
     generate zoom level geometry
     :param geometry:
     :param zoom_level:
     :return: zoom level geometry
     """
-    bbox = geometry_to_bounding_box(image_geometry)
+    bbox = geometry_to_bbox(image_geometry)
+    x_min, x_max, y_min, y_max = tc.boundary_to_xyz(bbox[0], bbox[2], bbox[1], bbox[3], zoom_level)
+
+    lng_left_min, lat_up_min, lng_right_min, lat_down_min = tc.xyz2boundary(x_min, y_min, zoom_level)
+    lng_left_max, lat_up_max, lng_right_max, lat_down_max = tc.xyz2boundary(x_max, y_max, zoom_level)
     
-    buffer_distance = calculate_buffer_distance(zoom_level)
-    buffer_geometry = generate_geometry_buffer(geometry, buffer_distance)
-    return buffer_geometry
-
-
-if __name__ == "__main__":
-    # image_path = r"C:\Users\Administrator\Desktop\2_贵阳替云_preview.tif"
-    # db_file = r"demo\image_source\database\image_source_infomation.db"
-    # image_geometry = get_image_geometry(image_path)
-    # intersecting_image_list = get_intersecting_images(image_path, db_file)
-    # print(intersecting_image_list)
-    # bbox = geometry_to_bounding_box(image_geometry)
-    # get_clipped_image(image_path, bbox)
-    # print(image_geometry)
-    # geometry_buffer = generate_geometry_buffer(image_geometry, 1)
-    # print(geometry_buffer)
-    print(calculate_buffer_distance(10))
+    lon_min = min(lng_left_min, lng_right_min, lng_left_max, lng_right_max)
+    lat_min = min(lat_up_min, lat_down_min, lat_up_max, lat_down_max)
+    lon_max = max(lng_left_min, lng_right_min, lng_left_max, lng_right_max)
+    lat_max = max(lat_up_min, lat_down_min, lat_up_max, lat_down_max)
+    return (lon_min, lat_min, lon_max, lat_max)

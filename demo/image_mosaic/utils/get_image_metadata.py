@@ -107,7 +107,6 @@ def __get_image_resolution(img_path):
         xres, yres = operator.itemgetter(1,5)(dataset.GetGeoTransform())
 
         return __convert_resolution_wgs84([xres, yres])
-    # print(xres,yres)
 
 
 def __convert_resolution_wgs84(resolution_xy):
