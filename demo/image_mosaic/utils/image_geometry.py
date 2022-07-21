@@ -11,13 +11,11 @@
 
 
 import os
-from sre_constants import CALL
 
 from osgeo import gdal
 from osgeo import ogr
 from shapely import wkt
 from shapely.geometry import Polygon
-import geopandas as gpd
 
 from utils.database_manipulation import select_data
 import utils.tile_lon_lat_convert as tc

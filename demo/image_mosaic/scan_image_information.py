@@ -54,11 +54,11 @@ def scan_and_record_image_information(image_dir, db_file):
 
 if __name__ == "__main__":
     # image dir to scan
-    image_dir = r"E:\Data\tiff\11"
+    original_image_repository = r"E:\Data\tiff\11"
     # db file path to store image source information
     db_file = r"demo\image_mosaic\database\image_source_infomation.db"
 
     start_time = time.time()
-    scan_and_record_image_information(image_dir, db_file)
+    scan_and_record_image_information(original_image_repository, db_file)
     end_time = time.time()
     print("time used: " + str(round((end_time - start_time),3)) + "s.")

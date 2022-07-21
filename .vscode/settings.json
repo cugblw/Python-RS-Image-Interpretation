@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "image source information",
+            "database": "${workspaceFolder:Python-RS-Image-Interpretation}/demo/image_mosaic/database/image_source_infomation.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
