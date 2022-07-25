@@ -12,6 +12,7 @@
 
 import io
 import logging
+from math import ceil
 import os
 import time
 import tarfile
@@ -101,7 +102,7 @@ def get_zip_list_by_tileId(zoom, x, y, zip_dir):
     return zip_filter_list
 
 
-def group_list(tar_list, group_size):
+def group_list(tar_list, process_num):
     """
     list分组
     :param tar_list:
@@ -109,6 +110,8 @@ def group_list(tar_list, group_size):
     :return: group_list
     """
     tar_group_list = []
+    group_size = ceil(len(tar_list) / process_num)
+
     for i in range(0, len(tar_list), group_size):
         b = tar_list[i:i+group_size]
         tar_group_list.append(b)
@@ -203,13 +206,13 @@ def composite_tiles(image_tar_list, raster_zip_path, output_dir):
 
 if __name__ == "__main__":
     # 栅格瓦片zip包路径
-    raster_zip_path = '/app2/tmp/raster_image_merge/beijing_raster/'
+    raster_zip_path = r'C:\Users\Administrator\Desktop\beijing_raster'
     # 影像瓦片tar包路径
-    image_tar_path = '/app2/tmp/raster_image_merge/tar_test'
+    image_tar_path = r'C:\Users\Administrator\Desktop\tar_test'
     # 合成瓦片输出路径
-    output_path = '/app2/tmp/raster_image_merge/new'
+    output_path = r'C:\Users\Administrator\Desktop\new'
     # 指定进程数,建议设置8个进程
-    process_num = 8
+    process_num = 1
 
     start_time = time.time()
 
@@ -220,8 +223,11 @@ if __name__ == "__main__":
 
     # 获取影像tar包列表
     image_tar_list = get_image_tar_list(image_tar_path)
+    # 分组
+    if process_num >8:
+        process_num = 8
+    
     image_tar_list_group = group_list(image_tar_list, process_num)
-
     partial_composite = partial(
         composite_tiles, raster_zip_path=raster_zip_path, output_dir=output_path)
 
