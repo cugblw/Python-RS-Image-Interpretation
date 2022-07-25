@@ -125,7 +125,7 @@ def composite_tiles(image_tar_path,temp_path,raster_zip_path):
                             members = tar.getnames()
                             if check_tile_exist_tar(int(z),int(x),int(y),members):
                                 # print("Find a matching tile: %s. "%(name))
-                                logging.info("Find a matching tile: %s. "%(name))
+                                logging.info("Find a matching tile: %s. "%(os.path.basename(raster_zip_path) + "/" + name))
                                 raster_img = Image.open(zip_file.open(name))
                                 if np.all(np.asarray(raster_img) == 0):
                                     pass                              

@@ -72,7 +72,7 @@ if __name__ == '__main__':
     # original image dir that contains original images
     original_image_repository = r'C:\Users\Administrator\Desktop\local_update'
     # db file path to store image source information
-    db_file = r'demo\image_mosaic\database\image_source_infomation.db'
+    db_file = r'demo\image_extract_mosaic\database\image_source_infomation.db'
     # image dir to store update image
     update_image_dir = r'C:\Users\Administrator\Desktop\update'
     # image path to be updated
