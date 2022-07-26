@@ -14,6 +14,7 @@ import io
 import logging
 from math import ceil
 import os
+import shutil
 import time
 import tarfile
 from zipfile import ZipFile
@@ -22,6 +23,8 @@ from multiprocessing import Pool
 
 from PIL import Image
 import numpy as np
+
+from tile_lon_lat_convert import low_room_tile_to_high_room_tile
 
 
 logging.basicConfig(level=logging.INFO,
@@ -86,14 +89,21 @@ def get_zip_list_by_tileId(zoom, x, y, zip_dir):
         zoom_index_list = None
     
     else:
-        zoom_index_list = [7]
+        zoom_index_list = [0,3,7]
 
     zip_tile_list = []
     for zoom_index in zoom_index_list:
-        zip_tile_x = int(x >> (zoom-zoom_index))
-        zip_tile_y = int(y >> (zoom-zoom_index))
-        zip_tile_list.append(
-            (str(zoom_index) + "_" + str(zip_tile_x) + "_" + str(zip_tile_y)))
+        if zoom >= zoom_index:
+            zip_tile_x = int(x >> (zoom-zoom_index))
+            zip_tile_y = int(y >> (zoom-zoom_index))
+            zip_tile_list.append(
+                (str(zoom_index) + "_" + str(zip_tile_x) + "_" + str(zip_tile_y)))
+        else:
+            x_min, x_max, y_min, y_max, z_high = low_room_tile_to_high_room_tile(x,y,zoom,zoom_index)
+            for x_index in range(x_min, x_max+1):
+                for y_index in range(y_min, y_max+1):
+                    zip_tile_list.append(
+                        (str(zoom_index) + "_" + str(x_index) + "_" + str(y_index)))
 
     for zip_file in zip_list:
         for zip_tile in zip_tile_list:
@@ -129,19 +139,29 @@ def composite_tiles(image_tar_list, raster_zip_path, output_dir):
     # image_tar_list = get_image_tar_list(image_tar_path)
     zip_temp_dict = {}
     zip_temp_list = []
+    zip_members_name_temp_dict = {}
     for image_tar in image_tar_list:
         logging.info("matching image and raster tile: {}.".format(image_tar))
         image_tar_name = os.path.basename(image_tar)
         image_tar_tileId = image_tar_name.split(".")[0]
-        z, x, y = image_tar_tileId.split("_")
+        try:
+            z, x, y = image_tar_tileId.split("_")
+        except:
+            logging.error("image_tar_tileId: {} is invalid.".format(image_tar_tileId))
+            shutil.copy(image_tar, output_dir)
+            continue
         zip_list = get_zip_list_by_tileId(
             int(z), int(x), int(y), raster_zip_path)
-        if len(zip_list) == 0:
+        if (zip_list == None) or (len(zip_list) == 0) or ("_" not in image_tar_tileId):
             logging.info("no raster tile found: {}.".format(image_tar))
+            shutil.copy(image_tar, output_dir)
             continue
         zip_dict = {}
+        zip_members_name_dict = {}
         if zip_list == zip_temp_list:
             zip_dict = zip_temp_dict
+            for zip_file in zip_list:
+                zip_members_name_dict = zip_members_name_temp_dict
         
         else:
             for zip_file_path in zip_list:
@@ -151,68 +171,81 @@ def composite_tiles(image_tar_list, raster_zip_path, output_dir):
                 for zip_member in zip_members:
                     zip_memebers_dict[zip_member] = zip_file.open(zip_member)
                 zip_dict[zip_file_path] = zip_memebers_dict
+                zip_members_name_dict[zip_file_path] = zip_members
 
         tar_file = tarfile.open(image_tar)
         tar_members = tar_file.getmembers()
         new_tar_file = tarfile.open(
             os.path.join(output_dir, image_tar_name), "w")
+
         for tar_member in tar_members:
             tar_member_name = tar_member.name
             raster_name = "raster_" + \
                 (tar_member_name.split("/")[-1].split(".")[0])
-            for zip_file_path in zip_dict.keys():
-                if raster_name in zip_dict[zip_file_path].keys() and tar_member_name not in new_tar_file.getnames():
-                    image_img = Image.open(io.BytesIO(
-                        tar_file.extractfile(tar_member_name).read()))
-                    raster_img = Image.open(
-                        zip_dict[zip_file_path][raster_name])
+            
+            tile_exist = False
+            tile_exist_zip_path = None
+            for zip_file_path in zip_members_name_dict.keys():
+                if raster_name in zip_members_name_dict[zip_file_path]:
+                    tile_exist = True
+                    tile_exist_zip_path = zip_file_path
+                    break
+                else:
+                    continue
 
-                    if np.all(np.asarray(raster_img) == 0):
-                        new_tar_file.addfile(tar_file.getmember(
-                            tar_member_name), tar_file.extractfile(tar_member_name))
+            if tile_exist:
+                image_img = Image.open(io.BytesIO(
+                    tar_file.extractfile(tar_member_name).read()))
+                raster_img = Image.open(
+                    zip_dict[tile_exist_zip_path][raster_name])
 
-                    else:
-                        image_img.paste(raster_img, (0, 0), raster_img)
-
-                        if image_img.mode != "RGB":
-                            img_byte_arr = io.BytesIO()
-                            image_img.save(img_byte_arr, format="PNG")
-                            data = img_byte_arr.getvalue()
-                            tarinfo = tarfile.TarInfo(tar_member_name)
-                            tarinfo.size = len(data)
-                            new_tar_file.addfile(tarinfo, io.BytesIO(data))
-
-                        else:
-                            img_byte_arr = io.BytesIO()
-                            image_img.save(img_byte_arr, format="JPEG")
-                            data = img_byte_arr.getvalue()
-                            tarinfo = tarfile.TarInfo(tar_member_name)
-                            tarinfo.size = len(data)
-                            new_tar_file.addfile(tarinfo, io.BytesIO(data))
-
-                elif tar_member_name not in new_tar_file.getnames():
+                if np.all(np.asarray(raster_img) == 0):
                     new_tar_file.addfile(tar_file.getmember(
                         tar_member_name), tar_file.extractfile(tar_member_name))
 
                 else:
-                    pass
+                    image_img.paste(raster_img, (0, 0), raster_img)
+
+                    if image_img.mode != "RGB":
+                        img_byte_arr = io.BytesIO()
+                        image_img.save(img_byte_arr, format="PNG")
+                        # image_img.save(os.path.join(output_dir, os.path.basename(tar_member_name)), format="PNG")
+                        data = img_byte_arr.getvalue()
+                        tarinfo = tarfile.TarInfo(tar_member_name)
+                        tarinfo.size = len(data)
+                        new_tar_file.addfile(tarinfo, io.BytesIO(data))
+
+                    else:
+                        img_byte_arr = io.BytesIO()
+                        image_img.save(img_byte_arr, format="JPEG")
+                        # image_img.save(os.path.join(output_dir, os.path.basename(tar_member_name)), format="JPEG")
+                        data = img_byte_arr.getvalue()
+                        tarinfo = tarfile.TarInfo(tar_member_name)
+                        tarinfo.size = len(data)
+                        new_tar_file.addfile(tarinfo, io.BytesIO(data))
+            
+            else:
+                new_tar_file.addfile(tar_file.getmember(
+                    tar_member_name), tar_file.extractfile(tar_member_name))
 
         new_tar_file.close()
         tar_file.close()
         zip_temp_list = zip_list
         zip_temp_dict = zip_dict   # 将zip_dict存入zip_temp_dict中，以便后续使用
+        zip_members_name_temp_dict = zip_members_name_dict # 将zip_members_name_dict存入zip_temp_dict中，以便后续使用
         zip_dict = {}           # 清空zip_dict
+        zip_members_name_dict = {} # 清空zip_members_name_dict
 
 
 if __name__ == "__main__":
     # 栅格瓦片zip包路径
-    raster_zip_path = r'C:\Users\Administrator\Desktop\beijing_raster'
+    raster_zip_path = "/app2/tmp/raster_image_merge/raster_0_14"
     # 影像瓦片tar包路径
-    image_tar_path = r'C:\Users\Administrator\Desktop\tar_test'
+    image_tar_path = "/app2/tmp/raster_image_merge/tar_test"
     # 合成瓦片输出路径
-    output_path = r'C:\Users\Administrator\Desktop\new'
+    output_path = "/app2/tmp/raster_image_merge/output"
     # 指定进程数,建议设置8个进程
-    process_num = 1
+    process_num = 8
 
     start_time = time.time()
 
@@ -224,9 +257,6 @@ if __name__ == "__main__":
     # 获取影像tar包列表
     image_tar_list = get_image_tar_list(image_tar_path)
     # 分组
-    if process_num >8:
-        process_num = 8
-    
     image_tar_list_group = group_list(image_tar_list, process_num)
     partial_composite = partial(
         composite_tiles, raster_zip_path=raster_zip_path, output_dir=output_path)
